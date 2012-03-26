@@ -66,7 +66,7 @@ function merge(filePaths, targetFilePath, source, destination, config, decorator
     destination = destination || "./";
     config = getConfig(config);
     decorator = getDecorator(decorator);
-    
+
     var mergedFileContent = "";
 
     mergedFileContent += decorator.onPackageStart(targetFilePath, config);
@@ -110,12 +110,12 @@ function merge(filePaths, targetFilePath, source, destination, config, decorator
  *   decorator: "myDecoratorModule.js",
  *   packages: {
  *     "myPackage1.js": {
- *       decorator: "localDecoratorModule.js", 
+ *       decorator: "localDecoratorModule.js",
  *       config: {},
  *       files: [
  *         "file1.js",
  *         "file2.js"
- *       ]   
+ *       ]
  *     }
  *   }
  * });
@@ -172,7 +172,7 @@ if(!module.parent) {
     }
 
     console.log("Merging files " + files);
-    
+
     var newFileName = merge(files, argv.t, null, null, {jsmin: argv.m, md5: argv.v}, require(argv.d));
 
     console.log("Package file " + newFileName + " created!");

@@ -1,5 +1,5 @@
 var crypto = require("crypto");
-var fs = require("fs.extra");
+var fs = require("fs-extra");
 var util = require("util");
 
 
@@ -42,21 +42,21 @@ function versionContent(filePath, content, targetDir, pattern) {
 /**
  * Create a new versioned copy of the file path as argument
  * @param {String} filePath The complete path to the file
- * @param {Function} cb The copy is asynchronous, pass a callback here. It will be called with the new complete path as first argument
  * @param {String} targetDir [Optional] If passed, the file will be copied to this target dir. Default to the dir of the source file
  * @param {String} pattern [Optional] A pattern to know how to name the file, by default will be named fileName-md5.js (use [name], [md5] and [extension] placeholders in the pattern, e.g. [name]-[md5].[extension])
  */
-function versionFile(filePath, cb, targetDir, pattern) {
+function versionFile(filePath, targetDir, pattern) {
     var content = fs.readFileSync(filePath);
     var newFilePath = versionContent(filePath, content, targetDir, pattern);
 
-    fs.copy(filePath, newFilePath, function(err) {
-        if(err) {
-            throw err;
-        } else {
-            cb(newFilePath);
-        }
-    });
+    try {
+        // https://github.com/jprichardson/node-fs-extra
+        // FIXME: weird issue on windows: "Error: UNKNOWN, unknown error"
+        // Triggered by readSync in fs module, however, doesn't seem to be causing a problem, so, for now, just try/catching
+        fs.copyFileSync(filePath, newFilePath);
+    } catch(e) {}
+
+    return newFilePath;
 };
 
 
@@ -81,9 +81,9 @@ if (!module.parent) {
     var targetDir = argv.t === DEFAULT_TARGET ? false : targetDir;
     var pattern = argv.p;
 
-    versionFile(sourceFilePath, function(newFilePath, md5) {
-        console.log("File " + newFilePath + " created!");
-    }, targetDir, pattern);
+    var newFilePath = versionFile(sourceFilePath);
+
+    console.log("File " + newFilePath + " created!");
 
 } else {
     module.exports.versionFile = versionFile;
