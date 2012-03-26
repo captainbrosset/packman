@@ -1,0 +1,183 @@
+var fs = require("fs");
+var wrench = require("wrench");
+
+
+function getParentDirectoryPath(file) {
+    return file.substring(0, file.lastIndexOf("/"));
+}
+
+function writeContentToFile(file, content) {
+    if(content) {
+        if(file.indexOf("/") === -1) {
+            file = "./" + file;
+        }
+        wrench.mkdirSyncRecursive(getParentDirectoryPath(file), 0777);
+        var fd = fs.openSync(file, "w");
+        fs.writeSync(fd, content);
+        fs.closeSync(fd);
+    }
+}
+
+function overrideObject(src, dest) {
+    for(var i in dest) {
+        src[i] = dest[i];
+    }
+
+    return src;
+}
+
+function getConfig(config) {
+    return overrideObject({
+        jsmin: true,
+        mangle: false,
+        md5: false
+    }, config);
+}
+
+function getDecorator(decorator) {
+    return overrideObject(require("./merger-defaultdecorator.js"), decorator);
+}
+
+function getPhysicalPath(logicalPath, directory) {
+    if(directory.substring(directory.length - 1) !== "/") {
+        directory += "/";
+    }
+
+    if(logicalPath.substring(0, 1) == "/") {
+        return directory + logicalPath.substring(1);
+    }
+    if(logicalPath.substring(0, 2) == "./") {
+        return directory + logicalPath.substring(2);
+    }
+    return directory + logicalPath;
+}
+
+/**
+ * Merge a series of files into one package file
+ * @param {Array} filePaths An array of strings, each one representing the complete path to a file to be merged
+ * @param {String} targetFilePath The target file path/name. The name/path can be altered depending on the decorator
+ * @param {String} source [Optional] The base source folder to read files from. Defaults to ./
+ * @param {String} destination [Optional] The base destination folder to write package files to. Defaults to ./
+ * @param {Object} config [Optional] The default config object is {jsmin: true, mangle: false, md5: false}. Pass your own object to override it. Note that this will be passed to each function of the decorator too.
+ * @param {Object} decorator [Optional] The default decorator implements the following functions: onFileContent(fileName, fileContent, config), onPackageStart(fileName, config), onPackageEnd(fileName, config), onFileStart(fileName, packageFileName, config), onFileEnd(fileName, packageFileName, config), onPackageName(fileName, fileContent, config), to react to events when the files are being merged. If you pass your own object with methods here, they will override the default decorator.
+ */
+function merge(filePaths, targetFilePath, source, destination, config, decorator) {
+    source = source || "./";
+    destination = destination || "./";
+    config = getConfig(config);
+    decorator = getDecorator(decorator);
+    
+    var mergedFileContent = "";
+
+    mergedFileContent += decorator.onPackageStart(targetFilePath, config);
+
+    for(var i = 0, l = filePaths.length; i < l; i ++) {
+        var filePath = filePaths[i];
+        var physicalFilePath = getPhysicalPath(filePath, source);
+
+        mergedFileContent += decorator.onFileStart(filePath, targetFilePath, config);
+
+        var fileContent = fs.readFileSync(physicalFilePath, "utf-8");
+        mergedFileContent += decorator.onFileContent(filePath, fileContent, config);
+
+        mergedFileContent += decorator.onFileEnd(filePath, targetFilePath, config);
+    }
+
+    mergedFileContent += decorator.onPackageEnd(targetFilePath, config);
+
+    var newTargetFilePath = decorator.onPackageName(targetFilePath, mergedFileContent, config);
+    if(!newTargetFilePath) {
+        console.error("The decorator did not return any name for the package file");
+    }
+
+    var physicalPackageFilePath = getPhysicalPath(newTargetFilePath, destination);
+
+    writeContentToFile(physicalPackageFilePath, mergedFileContent);
+
+    return newTargetFilePath;
+}
+
+/**
+ * Run the merge multiple times
+ * @param {Object} descriptor The only parameter is a config object telling multiMerge which packages to create and how.
+ * Example usage:
+ * <pre>
+ * multiMerge({
+ *   config: {
+ *     jsmin: true,
+ *     md5: true
+ *   },
+ *   decorator: "myDecoratorModule.js",
+ *   packages: {
+ *     "myPackage1.js": {
+ *       decorator: "localDecoratorModule.js", 
+ *       config: {},
+ *       files: [
+ *         "file1.js",
+ *         "file2.js"
+ *       ]   
+ *     }
+ *   }
+ * });
+ * </pre>
+ * Config can be passed globally, but also for each package (first to be used is local, then global, then default)
+ * The same applies for decorators.
+ */
+function multiMerge(descriptor) {
+    var globalConfig = descriptor.config || {};
+    var globalDecorator = descriptor.decorator || {};
+    var packages = descriptor.packages;
+
+    for(var packageName in packages) {
+        var localConfig = overrideObject(globalConfig, packages[packageName].config || {});
+        var localDecorator = overrideObject(globalDecorator, packages[packageName].decorator || {});
+        var files = packages[packageName].files;
+
+        console.log("\nCreating package file " + packageName + " with files: " + files);
+
+        var newPackageName = merge(files, packageName, descriptor.source, descriptor.destination, localConfig, localDecorator);
+
+        console.log(" -> Package " + newPackageName + " created!");
+    }
+}
+
+
+if(!module.parent) {
+
+    var argv = require('optimist')
+        .usage('Merge file together.\nUsage: $0 -f file1.js file2.js file3.js -t pack.js --jsmin --md5 -d mydecorator.js')
+        .demand('f')
+        .alias('f', 'files')
+        .describe('f', 'List of files to be packaged')
+        .demand('t')
+        .alias('t', 'target')
+        .describe('t', 'Target package file (name will be changed if md5 is passed')
+        .boolean('m')
+        .alias('m', 'jsmin')
+        .default('m', true)
+        .describe('m', 'Minify javascript files (only applies to .js files)')
+        .boolean('v')
+        .alias('v', 'md5')
+        .default('v', false)
+        .describe('v', 'Version the target package with md5 hash')
+        .default('d', './merger-defaultdecorator.js')
+        .alias('d', 'decorator')
+        .describe('d', 'The decorator module to be used')
+        .argv
+    ;
+
+    var files = [argv.f];
+    for(var i = 0, l = argv._.length; i < l; i ++) {
+        files.push(argv._[i]);
+    }
+
+    console.log("Merging files " + files);
+    
+    var newFileName = merge(files, argv.t, null, null, {jsmin: argv.m, md5: argv.v}, require(argv.d));
+
+    console.log("Package file " + newFileName + " created!");
+
+} else {
+    module.exports.merge = merge;
+    module.exports.multiMerge = multiMerge;
+}

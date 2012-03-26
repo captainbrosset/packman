@@ -1,0 +1,15 @@
+{
+    "config": {
+        "md5": true,
+        "mangle": true
+    },
+    "source": "test/src",
+    "destination": "test/build",
+    "packages": {
+        "package1.js": {
+            "files": {
+                "includes": ["**/*.js"]
+            }
+        }
+    }
+}
