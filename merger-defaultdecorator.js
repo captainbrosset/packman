@@ -33,3 +33,7 @@ module.exports.onPackageName = function(fileName, fileContent, config, userPacka
         return fileName;
     }
 };
+
+module.exports.onMultiMergeStart = function(multiMergeConfig, userPackages) {};
+
+module.exports.onMultiMergeEnd = function(multiMergeConfig, userPackages) {};

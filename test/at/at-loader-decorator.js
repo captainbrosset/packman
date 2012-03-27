@@ -28,9 +28,15 @@ function getAriaUrlMap(userPackages) {
     return map;
 }
 
+var licenseText = "";
+
+module.exports.onMultiMergeStart = function(multiMergeConfig, userPackages) {
+    // Retrieve the license text and keep it for insertion in every file
+};
+
 module.exports.onPackageStart = function(fileName, config, userPackages) {
     // add license text
-    return "/*\nLicense Apache v2\n*/\n";
+    return licenseText + "\n";
 };
 
 module.exports.onPackageEnd = function(fileName, config, userPackages) {

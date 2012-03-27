@@ -150,6 +150,9 @@ function multiMerge(config, userPackages, verbose) {
     var globalDecorator = getCustomDecorator(config.decorator, verbose) || {};
     var packages = config.packages;
 
+    // TODO:
+    // Need the "resolved" global decorator, so that we can call onMultiMergeStart right now
+
     for(var packageName in packages) {
         var localConfig = overrideObject(globalConfig, packages[packageName].config || {});
         var localDecorator = overrideObject(globalDecorator, getCustomDecorator(packages[packageName].decorator, verbose));
@@ -167,6 +170,10 @@ function multiMerge(config, userPackages, verbose) {
 
         console.log("  >>> Package " + newPackageName + " created!");
     }
+
+    // TODO:
+    // Need the "resolved" global decorator, so that we can call onMultiMergeEnd right now
+    // Need to consolidate a list of newPackageNames into the userPackages somehow, so that the decorator can do stuff with it
 }
 
 

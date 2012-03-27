@@ -3,12 +3,18 @@
         "md5": true,
         "mangle": true
     },
-    "source": "test/src",
+    "source": "D:/jdevcc/at_v1.1_int/at1104_core/at/src/main/static/aria/core/",
     "destination": "test/build",
     "packages": {
-        "package1.js": {
+        "transports.js": {
             "files": {
-                "includes": ["**/*.js"]
+                "includes": ["transport/*.js"]
+            }
+        },
+        "core.js": {
+            "files": {
+                "includes": ["**/*.js"],
+                "excludes": ["transport/*.js"]
             }
         }
     }
