@@ -1,0 +1,30 @@
+{
+    "config": {
+        "md5": true
+    },
+    "source": "test/at/src",
+    "destination": "test/at/target",
+    "packages": {
+        "aria-templates.js": {
+            "config": {
+                "version": "1.1-26"
+            },
+            "decorator": "test/at/at-loader-decorator.js",
+            "files": [
+                "aria/Aria.js",
+                "aria/core/ClassLoader.js",
+                "aria/core/IO.js"
+            ]
+        },
+        "ariawidgets.js": {
+            "files": {
+                "includes": ["aria/widgetLibs/**/*.js", "aria/widgets/**/*.js"]
+            }
+        },
+        "utils.js": {
+            "files": {
+                "includes": ["aria/utils/**/*.js"]
+            }
+        }
+    }
+}

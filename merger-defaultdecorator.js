@@ -19,7 +19,7 @@ module.exports.onPackageEnd = function(fileName, config, userPackages) {
 };
 
 module.exports.onFileStart = function(fileName, packageFileName, config, userPackages) {
-    return "\n\n// File: " + fileName + "\n\n";
+    return "\n\n// File: " + fileName + "\n";
 };
 
 module.exports.onFileEnd = function(fileName, packageFileName, config, userPackages) {

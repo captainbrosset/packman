@@ -1,0 +1,6 @@
+- pre-compile templates, and minify the resulting js
+- custom AT decorators (1 for the bootstrap, the other for the other files)
+    - md5 is not knowat packageEnd time, so the loader decorator cannot output the right map.
+    --> Need an other post processor entry point on decorators (onBeforeStart, onAfterEnd) with all info about original config, list of resolved files, new names, ... so that the decorator can still open and modify files at this point
+- create map
+- handle license text at top of file

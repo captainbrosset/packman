@@ -1,0 +1,31 @@
+{
+    "config": {
+        "md5": true,
+        "mangle": true
+    },
+    "source": "test/src",
+    "destination": "test/build",
+    "packages": {
+        "bootstrap.js": {
+            "files": [
+                "CORE.js",
+                "CORE/Object.js",
+                "CORE/Logging.js"
+            ]
+        },
+        "logger.js": {
+            "files": {
+                "includes": ["CORE/log/*.js"]
+            }
+        },
+        "utils.js": {
+            "config": {
+                "jsmin": false
+            },
+            "files": {
+                "includes": ["CORE/**/*.js"],
+                "excludes": ["CORE/*.js", "CORE/log/*"]
+            }
+        }
+    }
+}

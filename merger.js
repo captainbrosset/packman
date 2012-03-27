@@ -19,11 +19,13 @@ function writeContentToFile(file, content) {
 }
 
 function overrideObject(src, dest) {
+    var newObject = require("./libs/clone.js").clone(src);
+
     for(var i in dest) {
-        src[i] = dest[i];
+        newObject[i] = dest[i];
     }
 
-    return src;
+    return newObject;
 }
 
 function getConfig(config) {
@@ -98,6 +100,23 @@ function merge(filePaths, targetFilePath, source, destination, config, decorator
     return newTargetFilePath;
 }
 
+function getCustomDecorator(decoratorConfig, verbose) {
+    var customDecorator = {};
+    if(decoratorConfig) {
+        try {
+            if(decoratorConfig.substring(0,1) !== "/" && decoratorConfig.substring(0,2) !== "./") {
+                decoratorConfig = "./" + decoratorConfig;
+            }
+            customDecorator = require(decoratorConfig);
+        } catch(e) {
+            if(verbose) {
+                console.warn("\n  !! Custom decorator " + decoratorConfig + " could not be loaded. Continuing with default decorator.", e);
+            }
+        }
+    }
+    return customDecorator;
+}
+
 /**
  * Run the merge multiple times
  * @param {Object} config The only parameter is a config object telling multiMerge which packages to create and how.
@@ -128,12 +147,13 @@ function merge(filePaths, targetFilePath, source, destination, config, decorator
  */
 function multiMerge(config, userPackages, verbose) {
     var globalConfig = config.config || {};
-    var globalDecorator = config.decorator || {};
+    var globalDecorator = getCustomDecorator(config.decorator, verbose) || {};
     var packages = config.packages;
 
     for(var packageName in packages) {
         var localConfig = overrideObject(globalConfig, packages[packageName].config || {});
-        var localDecorator = overrideObject(globalDecorator, packages[packageName].decorator || {});
+        var localDecorator = overrideObject(globalDecorator, getCustomDecorator(packages[packageName].decorator, verbose));
+
         var files = packages[packageName].files;
 
         if(verbose) {

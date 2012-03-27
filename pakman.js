@@ -10,9 +10,8 @@ var argv = require('optimist')
     .argv
 ;
 
-var configLib = require("./libs/config.js");
-var config = configLib.get(argv.c);
-var originalConfig = configLib.clone(config);
+var config = require("./libs/config.js").get(argv.c);
+var originalConfig = require("./libs/clone.js").clone(config);
 
 require("./libs/env.js").prepare(config.destination);
 var allSourceFiles = require("./libs/finder.js").getAllSourceFiles(config.source);
