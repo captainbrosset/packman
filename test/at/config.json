@@ -2,6 +2,7 @@
     "config": {
         "md5": true
     },
+    "decorator": "test/at/at-bundle-decorator.js",
     "source": "test/at/src",
     "destination": "test/at/target",
     "packages": {

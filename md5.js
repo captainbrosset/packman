@@ -15,17 +15,13 @@ function getNewFileName(dir, fileName, md5, extension, pattern) {
 
 function prepareTargetDir(targetDir, sourceDir) {
     targetDir = targetDir || sourceDir;
-    if(targetDir.substring(targetDir.length - 1) !== "/") {
+    if(targetDir !== "" && targetDir.substring(targetDir.length - 1) !== "/") {
         targetDir += "/";
     }
     return targetDir;
 }
 
 function versionContent(filePath, content, targetDir, pattern) {
-    if(filePath.indexOf("/") === -1) {
-        filePath = "./" + filePath;
-    }
-
     var sourceDir = filePath.substring(0, filePath.lastIndexOf("/") + 1);
     var fileName = filePath.substring(filePath.lastIndexOf("/") + 1);
     var bareFileName = fileName.substring(0, fileName.lastIndexOf("."));

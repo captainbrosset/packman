@@ -66,15 +66,17 @@ function getPhysicalPath(logicalPath, directory) {
  * @param {Object} config [Optional] The default config object is {jsmin: true, mangle: false, md5: false}. Pass your own object to override it. Note that this will be passed to each function of the decorator too.
  * @param {Object} decorator [Optional] The default decorator implements the following functions: onFileContent(fileName, fileContent, config), onPackageStart(fileName, config), onPackageEnd(fileName, config), onFileStart(fileName, packageFileName, config), onFileEnd(fileName, packageFileName, config), onPackageName(fileName, fileContent, config), to react to events when the files are being merged. If you pass your own object with methods here, they will override the default decorator.
  * @param {Object} userPackages The original packages list, as configured by the user, with un-resolved paths
+ * @param {Boolean} verbose Whether to output debug info
+ * @return {String} The target file name that was created
  */
-function merge(filePaths, targetFilePath, source, destination, config, decorator, userPackages) {
+function merge(filePaths, targetFilePath, source, destination, config, decorator, userPackages, verbose) {
     source = source || "./";
     destination = destination || "./";
     config = getConfig(config);
     decorator = getDecorator(decorator);
 
     var mergedFileContent = "";
-
+        
     mergedFileContent += decorator.onPackageStart(targetFilePath, config, userPackages);
 
     for(var i = 0, l = filePaths.length; i < l; i ++) {
@@ -84,7 +86,12 @@ function merge(filePaths, targetFilePath, source, destination, config, decorator
         mergedFileContent += decorator.onFileStart(filePath, targetFilePath, config, userPackages);
 
         var fileContent = fs.readFileSync(physicalFilePath, "utf-8");
-        mergedFileContent += decorator.onFileContent(filePath, fileContent, config, userPackages);
+        fileContent = decorator.onFileContent(filePath, fileContent, config, userPackages);
+        if(!fileContent && verbose) {
+            console.warn("\n  !! The custom decorator generating " + targetFilePath + " needs to return a string from onFileContent().");
+        }
+
+        mergedFileContent += fileContent;
 
         mergedFileContent += decorator.onFileEnd(filePath, targetFilePath, config, userPackages);
     }
@@ -92,6 +99,12 @@ function merge(filePaths, targetFilePath, source, destination, config, decorator
     mergedFileContent += decorator.onPackageEnd(targetFilePath, config, userPackages);
 
     var newTargetFilePath = decorator.onPackageName(targetFilePath, mergedFileContent, config, userPackages);
+    if(!newTargetFilePath) {
+        newTargetFilePath = targetFilePath;
+        if(verbose) {
+            console.warn("\n  !! The custom decorator generating " + targetFilePath + " needs to return a string from onPackageName(). Default name chosen.");
+        }
+    }
 
     var physicalPackageFilePath = getPhysicalPath(newTargetFilePath, destination);
 
@@ -114,7 +127,7 @@ function getCustomDecorator(decoratorConfig, verbose) {
             }
         }
     }
-    return customDecorator;
+    return getDecorator(customDecorator);
 }
 
 /**
@@ -148,10 +161,10 @@ function getCustomDecorator(decoratorConfig, verbose) {
 function multiMerge(config, userPackages, verbose) {
     var globalConfig = config.config || {};
     var globalDecorator = getCustomDecorator(config.decorator, verbose) || {};
+
     var packages = config.packages;
 
-    // TODO:
-    // Need the "resolved" global decorator, so that we can call onMultiMergeStart right now
+    globalDecorator.onMultiMergeStart(config, userPackages);
 
     for(var packageName in packages) {
         var localConfig = overrideObject(globalConfig, packages[packageName].config || {});
@@ -166,14 +179,19 @@ function multiMerge(config, userPackages, verbose) {
             }
         }
 
-        var newPackageName = merge(files, packageName, config.source, config.destination, localConfig, localDecorator, userPackages);
+        var newPackageName = merge(files, packageName, config.source, config.destination, localConfig, localDecorator, userPackages, verbose);
+
+        // packages[newPackageName] = packages[packageName];
+        // delete packages[packageName];
+        userPackages[newPackageName] = userPackages[packageName];
+        delete userPackages[packageName];
 
         console.log("  >>> Package " + newPackageName + " created!");
     }
 
     // TODO:
-    // Need the "resolved" global decorator, so that we can call onMultiMergeEnd right now
     // Need to consolidate a list of newPackageNames into the userPackages somehow, so that the decorator can do stuff with it
+    globalDecorator.onMultiMergeEnd(config, userPackages);
 }
 
 
