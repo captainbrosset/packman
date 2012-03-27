@@ -3,6 +3,10 @@ var argv = require('optimist')
     .demand('c')
     .alias('c', 'config')
     .describe('c', 'Path to the config file to use')
+    .boolean('v')
+    .alias('v', 'verbose')
+    .describe('v', 'Be all verbose about it')
+    .default('v', false)
     .argv
 ;
 
@@ -12,5 +16,13 @@ var allSourceFiles = require("./libs/finder.js").getAllSourceFiles(config.source
 var packages = require("./libs/resolver.js").resolveFilePaths(config.packages, allSourceFiles);
 config.packages = packages;
 
+if(argv.v) {
+    console.log("\n  Source: " + config.source);
+    console.log("  Destination: " + config.destination);
+    console.log("  Global config: ", config.config);
+}
+
 var merger = require("./merger.js");
-merger.multiMerge(config);
+merger.multiMerge(config, argv.v);
+
+console.log("\nPakman did it again! Have a good day!")

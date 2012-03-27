@@ -122,8 +122,9 @@ function merge(filePaths, targetFilePath, source, destination, config, decorator
  * </pre>
  * Config can be passed globally, but also for each package (first to be used is local, then global, then default)
  * The same applies for decorators.
+ * @param {Boolean} verbose Output more debug information
  */
-function multiMerge(descriptor) {
+function multiMerge(descriptor, verbose) {
     var globalConfig = descriptor.config || {};
     var globalDecorator = descriptor.decorator || {};
     var packages = descriptor.packages;
@@ -133,11 +134,16 @@ function multiMerge(descriptor) {
         var localDecorator = overrideObject(globalDecorator, packages[packageName].decorator || {});
         var files = packages[packageName].files;
 
-        console.log("\nCreating package file " + packageName + " with files: " + files);
+        if(verbose) {
+            console.log("\n  + " + packageName);
+            for(var i = 0, l = files.length; i < l; i ++) {
+                console.log("  | " + files[i]);
+            }
+        }
 
         var newPackageName = merge(files, packageName, descriptor.source, descriptor.destination, localConfig, localDecorator);
 
-        console.log(" -> Package " + newPackageName + " created!");
+        console.log("  >>> Package " + newPackageName + " created!");
     }
 }
 
