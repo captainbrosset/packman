@@ -1,6 +1,15 @@
 var antpattern = require("./antpattern.js");
 
 
+function isFileMatchingAtLeastOne(filePath, patterns) {
+    for(var i = 0, l = patterns.length; i < l; i ++) {
+        if(antpattern.match(patterns[i], filePath)) {
+            return true;
+        }
+    }
+    return false;
+}
+
 function resolveFilePaths(packages, allSourceFiles) {
     for(packageName in packages) {
         var packageFiles = [];
@@ -11,10 +20,8 @@ function resolveFilePaths(packages, allSourceFiles) {
                 packageFiles = allSourceFiles;
             } else {
                 for(var i = 0, l = allSourceFiles.length; i < l; i ++) {
-                    for(var j = 0, k = package.files.includes.length; j < k; j ++) {
-                        if(antpattern.match(package.files.includes[j], allSourceFiles[i])) {
-                            packageFiles.push(allSourceFiles[i]);
-                        }
+                    if(isFileMatchingAtLeastOne(allSourceFiles[i], package.files.includes)) {
+                        packageFiles.push(allSourceFiles[i]);
                     }
                 }
             }
@@ -22,10 +29,8 @@ function resolveFilePaths(packages, allSourceFiles) {
             if(package.files.excludes) {
                 var newPackageFiles = []
                 for(var i = 0, l = packageFiles.length; i < l; i ++) {
-                    for(var j = 0, k = package.files.excludes.length; j < k; j ++) {
-                        if(!antpattern.match(package.files.excludes[j], packageFiles[i])) {
-                            newPackageFiles.push(packageFiles[i]);
-                        }
+                    if(!isFileMatchingAtLeastOne(packageFiles[i], package.files.excludes)) {
+                        newPackageFiles.push(packageFiles[i]);
                     }
                 }
                 packageFiles = newPackageFiles;
