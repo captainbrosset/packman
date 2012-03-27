@@ -37,6 +37,19 @@ function get(configPath) {
 	return config;
 };
 
+function clone(configObject) {
+    var newObject = {};
+    var props = Object.getOwnPropertyNames(configObject);
+    props.forEach(function(name) {
+        if(typeof configObject[name] !== "object") {
+            newObject[name] = configObject[name];
+        } else {
+            newObject[name] = clone(configObject[name]);
+        }
+    });
+    return newObject;
+}
+
 
 if(!module.parent) {
 
@@ -51,4 +64,5 @@ if(!module.parent) {
 
 } else {
 	module.exports.get = get;
+    module.exports.clone = clone;
 }

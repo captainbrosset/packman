@@ -102,12 +102,63 @@ You may have noticed that the merger tool can take a decorator as argument (or c
 
 A decorator in pakman is a nodejs module that exports the following 6 functions:
 
-	module.exports.onFileContent = function(fileName, fileContent, config) {};
-	module.exports.onPackageStart = function(fileName, config) {};
-	module.exports.onPackageEnd = function(fileName, config) {};
-	module.exports.onFileStart = function(fileName, packageFileName, config) {};
-	module.exports.onFileEnd = function(fileName, packageFileName, config) {};
-	module.exports.onPackageName = function(fileName, fileContent, config) {};
+	/**
+	 * Called to alter the physical name of the package file before it is saved to the disk. Used to version the filename.
+	 * @param {String} fileName The logical package filename, as configured
+	 * @param {String} fileContent The content of the package file
+	 * @param {Object} config A resolved config object, as specified in the package config, or global config
+	 * @param {Object} userPackages The list of packages as configured in the config, with unresolved paths
+	 * @return {String} The physical file name
+	 */
+	module.exports.onPackageName = function(fileName, fileContent, config, userPackages) {};
+
+	/**
+	 * Called when a package file starts. Used to output header information into the file
+	 * @param {String} fileName The logical package filename, as configured
+	 * @param {Object} config A resolved config object, as specified in the package config, or global config
+	 * @param {Object} userPackages The list of packages as configured in the config, with unresolved paths
+	 * @return {String} The content to put an the top of the packaged file
+	 */
+	module.exports.onPackageStart = function(fileName, config, userPackages) {};
+
+	/**
+	 * Called when a package file ends.
+	 * @param {String} fileName The logical package filename, as configured
+	 * @param {Object} config A resolved config object, as specified in the package config, or global config
+	 * @param {Object} userPackages The list of packages as configured in the config, with unresolved paths
+	 * @return {String} The content to put an the top of the packaged file
+	 */
+	module.exports.onPackageEnd = function(fileName, config, userPackages) {};
+
+	/**
+	 * Called before the content of a source file is put into a package. Used to add delimiters to the package
+	 * @param {String} fileName The source folder relative file path
+	 * @param {String} packageFileName The logical package filename, as configured
+	 * @param {Object} config A resolved config object, as specified in the package config, or global config
+	 * @param {Object} userPackages The list of packages as configured in the config, with unresolved paths
+	 * @return {String} The content to put in the packaged file
+	 */
+	module.exports.onFileStart = function(fileName, packageFileName, config, userPackages) {};
+
+	/**
+	 * Called when the content of a source file is being put into a package. Used to process the source code
+	 * @param {String} fileName The source folder relative file path
+	 * @param {String} fileContent The content of the file
+	 * @param {Object} config A resolved config object, as specified in the package config, or global config
+	 * @param {Object} userPackages The list of packages as configured in the config, with unresolved paths
+	 * @return {String} The content to put in the packaged file
+	 */
+	module.exports.onFileContent = function(fileName, fileContent, config, userPackages) {};
+
+	/**
+	 * Called after the content of a source file is put into a package. Used to add delimiters to the package
+	 * @param {String} fileName The source folder relative file path
+	 * @param {String} packageFileName The logical package filename, as configured
+	 * @param {Object} config A resolved config object, as specified in the package config, or global config
+	 * @param {Object} userPackages The list of packages as configured in the config, with unresolved paths
+	 * @return {String} The content to put in the packaged file
+	 */
+	module.exports.onFileEnd = function(fileName, packageFileName, config, userPackages) {};
 
 Each of these functions must return a string that will be used to output the package content or file name. The goal of the decorator is to process file content or insert separators if needed.
 

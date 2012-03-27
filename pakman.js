@@ -10,7 +10,10 @@ var argv = require('optimist')
     .argv
 ;
 
-var config = require("./libs/config.js").get(argv.c);
+var configLib = require("./libs/config.js");
+var config = configLib.get(argv.c);
+var originalConfig = configLib.clone(config);
+
 require("./libs/env.js").prepare(config.destination);
 var allSourceFiles = require("./libs/finder.js").getAllSourceFiles(config.source);
 var packages = require("./libs/resolver.js").resolveFilePaths(config.packages, allSourceFiles);
@@ -23,6 +26,6 @@ if(argv.v) {
 }
 
 var merger = require("./merger.js");
-merger.multiMerge(config, argv.v);
+merger.multiMerge(config, originalConfig.packages, argv.v);
 
-console.log("\nPakman did it again! Have a good day!")
+console.log("\nPakman did it again! Have a great day!");

@@ -34,6 +34,9 @@ function getConfig(config) {
     }, config);
 }
 
+/**
+ * Get the "normalized" decorator, so it is safe to call all of its functions
+ */
 function getDecorator(decorator) {
     return overrideObject(require("./merger-defaultdecorator.js"), decorator);
 }
@@ -60,8 +63,9 @@ function getPhysicalPath(logicalPath, directory) {
  * @param {String} destination [Optional] The base destination folder to write package files to. Defaults to ./
  * @param {Object} config [Optional] The default config object is {jsmin: true, mangle: false, md5: false}. Pass your own object to override it. Note that this will be passed to each function of the decorator too.
  * @param {Object} decorator [Optional] The default decorator implements the following functions: onFileContent(fileName, fileContent, config), onPackageStart(fileName, config), onPackageEnd(fileName, config), onFileStart(fileName, packageFileName, config), onFileEnd(fileName, packageFileName, config), onPackageName(fileName, fileContent, config), to react to events when the files are being merged. If you pass your own object with methods here, they will override the default decorator.
+ * @param {Object} userPackages The original packages list, as configured by the user, with un-resolved paths
  */
-function merge(filePaths, targetFilePath, source, destination, config, decorator) {
+function merge(filePaths, targetFilePath, source, destination, config, decorator, userPackages) {
     source = source || "./";
     destination = destination || "./";
     config = getConfig(config);
@@ -69,26 +73,23 @@ function merge(filePaths, targetFilePath, source, destination, config, decorator
 
     var mergedFileContent = "";
 
-    mergedFileContent += decorator.onPackageStart(targetFilePath, config);
+    mergedFileContent += decorator.onPackageStart(targetFilePath, config, userPackages);
 
     for(var i = 0, l = filePaths.length; i < l; i ++) {
         var filePath = filePaths[i];
         var physicalFilePath = getPhysicalPath(filePath, source);
 
-        mergedFileContent += decorator.onFileStart(filePath, targetFilePath, config);
+        mergedFileContent += decorator.onFileStart(filePath, targetFilePath, config, userPackages);
 
         var fileContent = fs.readFileSync(physicalFilePath, "utf-8");
-        mergedFileContent += decorator.onFileContent(filePath, fileContent, config);
+        mergedFileContent += decorator.onFileContent(filePath, fileContent, config, userPackages);
 
-        mergedFileContent += decorator.onFileEnd(filePath, targetFilePath, config);
+        mergedFileContent += decorator.onFileEnd(filePath, targetFilePath, config, userPackages);
     }
 
-    mergedFileContent += decorator.onPackageEnd(targetFilePath, config);
+    mergedFileContent += decorator.onPackageEnd(targetFilePath, config, userPackages);
 
-    var newTargetFilePath = decorator.onPackageName(targetFilePath, mergedFileContent, config);
-    if(!newTargetFilePath) {
-        console.error("The decorator did not return any name for the package file");
-    }
+    var newTargetFilePath = decorator.onPackageName(targetFilePath, mergedFileContent, config, userPackages);
 
     var physicalPackageFilePath = getPhysicalPath(newTargetFilePath, destination);
 
@@ -99,7 +100,7 @@ function merge(filePaths, targetFilePath, source, destination, config, decorator
 
 /**
  * Run the merge multiple times
- * @param {Object} descriptor The only parameter is a config object telling multiMerge which packages to create and how.
+ * @param {Object} config The only parameter is a config object telling multiMerge which packages to create and how.
  * Example usage:
  * <pre>
  * multiMerge({
@@ -122,12 +123,13 @@ function merge(filePaths, targetFilePath, source, destination, config, decorator
  * </pre>
  * Config can be passed globally, but also for each package (first to be used is local, then global, then default)
  * The same applies for decorators.
+ * @param {Object} userPackages The original packages list, as configured by the user, with un-resolved paths
  * @param {Boolean} verbose Output more debug information
  */
-function multiMerge(descriptor, verbose) {
-    var globalConfig = descriptor.config || {};
-    var globalDecorator = descriptor.decorator || {};
-    var packages = descriptor.packages;
+function multiMerge(config, userPackages, verbose) {
+    var globalConfig = config.config || {};
+    var globalDecorator = config.decorator || {};
+    var packages = config.packages;
 
     for(var packageName in packages) {
         var localConfig = overrideObject(globalConfig, packages[packageName].config || {});
@@ -141,7 +143,7 @@ function multiMerge(descriptor, verbose) {
             }
         }
 
-        var newPackageName = merge(files, packageName, descriptor.source, descriptor.destination, localConfig, localDecorator);
+        var newPackageName = merge(files, packageName, config.source, config.destination, localConfig, localDecorator, userPackages);
 
         console.log("  >>> Package " + newPackageName + " created!");
     }
@@ -179,7 +181,10 @@ if(!module.parent) {
 
     console.log("Merging files " + files);
 
-    var newFileName = merge(files, argv.t, null, null, {jsmin: argv.m, md5: argv.v}, require(argv.d));
+    var userPackages = {};
+    userPackages[argv.t] = {"files": files};
+
+    var newFileName = merge(files, argv.t, null, null, {jsmin: argv.m, md5: argv.v}, require(argv.d), userPackages);
 
     console.log("Package file " + newFileName + " created!");
 
