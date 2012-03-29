@@ -47,6 +47,7 @@ module.exports.onFileContent = function(fileName, fileContent, config, userPacka
     if(getFileExtension(fileName) === "js") {
         return defaultDecorator.onFileContent(fileName, fileContent, config, userPackages);
     } else if(getFileExtension(fileName) === "tpl") {
+        // TODO : pre-compile templates
         return fileContent;
     } else {
         return fileContent;

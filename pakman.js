@@ -1,3 +1,9 @@
+/**
+ * pakman - the file packager, minifier and versioner.
+ * Takes in a config (json) file to tell it which files to merge, whether they should be minified and versioned.
+ */
+
+
 var argv = require('optimist')
     .usage('Package files.\nUsage: $0 -c path/to/myconfig.json')
     .demand('c')
@@ -5,7 +11,7 @@ var argv = require('optimist')
     .describe('c', 'Path to the config file to use')
     .boolean('v')
     .alias('v', 'verbose')
-    .describe('v', 'Be all verbose about it')
+    .describe('v', 'Be verbose about it')
     .default('v', false)
     .argv
 ;

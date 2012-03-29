@@ -28,7 +28,7 @@ module.exports.onFileEnd = function(fileName, packageFileName, config, userPacka
 
 module.exports.onPackageName = function(fileName, fileContent, config, userPackages) {
     if(config.md5) {
-        return md5.versionContent(fileName, fileContent);
+        return md5.getVersionedFileName(fileName, fileContent);
     } else {
         return fileName;
     }

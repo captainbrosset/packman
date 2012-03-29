@@ -3,8 +3,8 @@
         "md5": true,
         "mangle": true
     },
-    "source": "test/src",
-    "destination": "test/build",
+    "source": "test/simple/src",
+    "destination": "test/simple/build",
     "packages": {
         "bootstrap.js": {
             "files": [

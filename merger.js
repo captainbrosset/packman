@@ -1,3 +1,11 @@
+/**
+ * Merge text files together.
+ * This is particularly useful for website static resources to reduce the number of http requests to download files.
+ * The merger can retrieve and lists files to be merged, and then delegate to a "decorator" to take care of processing
+ * files before they are merged, or insert separators between them.
+ */
+
+
 var fs = require("fs");
 var wrench = require("wrench");
 
@@ -181,16 +189,12 @@ function multiMerge(config, userPackages, verbose) {
 
         var newPackageName = merge(files, packageName, config.source, config.destination, localConfig, localDecorator, userPackages, verbose);
 
-        // packages[newPackageName] = packages[packageName];
-        // delete packages[packageName];
         userPackages[newPackageName] = userPackages[packageName];
         delete userPackages[packageName];
 
         console.log("  >>> Package " + newPackageName + " created!");
     }
 
-    // TODO:
-    // Need to consolidate a list of newPackageNames into the userPackages somehow, so that the decorator can do stuff with it
     globalDecorator.onMultiMergeEnd(config, userPackages);
 }
 

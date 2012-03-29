@@ -1,3 +1,10 @@
+/**
+ * Minify JavaScript code.
+ * This uses uglify-js from https://github.com/mishoo/UglifyJS
+ * and therefore proposes the option to "mangle" names as well (obfuscate).
+ */
+
+
 var parser = require("uglify-js").parser;
 var minifier = require("uglify-js").uglify;
 var fs = require("fs");
