@@ -5,7 +5,9 @@ It is written in nodejs and requires:
 - optimist
 - uglify-js
 - wrench
-- fs.extra
+- fs-extra
+
+(these modules are under source control in node_modules)
 
 pakman was born of the need to group several JavaScript files together in one big, minified, versioned JavaScript file to improve websites' performance, therefore this is its most common use case. However, pakman works with any type of text files.
 
