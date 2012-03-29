@@ -55,7 +55,7 @@ jsmin
 
 Minify a JavaScript file.
 
-	Usage: node ./jsmin.js -s path/to/myFile.js -m
+	Usage: node jsmin -s path/to/myFile.js -m
 
 	Options:
 	  -s, --source  Path to the file to be minified  [required]
@@ -66,7 +66,7 @@ md5
 
 Version a file using the MD5 hash.
 
-	Usage: node ./md5 -s path/to/myFile.js
+	Usage: node md5 -s path/to/myFile.js
 
 	Options:
 	  -s, --source   Path to the file to be versioned                              [required]
@@ -78,7 +78,7 @@ merger
 
 Merge files together.
 
-	Usage: node ./merger -f file1.js file2.js file3.js -t pack.js --jsmin --md5 -d mydecorator.js
+	Usage: node merger -f file1.js file2.js file3.js -t pack.js --jsmin --md5 -d mydecorator.js
 
 	Options:
 	  -f, --files      List of files to be packaged                                [required]
