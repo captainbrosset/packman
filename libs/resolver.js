@@ -19,18 +19,18 @@ function resolveFilePaths(packages, allSourceFiles) {
             if(!package.files.includes) {
                 packageFiles = allSourceFiles;
             } else {
-                for(var i = 0, l = allSourceFiles.length; i < l; i ++) {
-                    if(isFileMatchingAtLeastOne(allSourceFiles[i], package.files.includes)) {
-                        packageFiles.push(allSourceFiles[i]);
+                for(var index = 0, nbOfFiles = allSourceFiles.length; index < nbOfFiles; index ++) {
+                    if(isFileMatchingAtLeastOne(allSourceFiles[index], package.files.includes)) {
+                        packageFiles.push(allSourceFiles[index]);
                     }
                 }
             }
 
             if(package.files.excludes) {
-                var newPackageFiles = []
-                for(var i = 0, l = packageFiles.length; i < l; i ++) {
-                    if(!isFileMatchingAtLeastOne(packageFiles[i], package.files.excludes)) {
-                        newPackageFiles.push(packageFiles[i]);
+                var newPackageFiles = [];
+                for(var index = 0, nbOfFiles = packageFiles.length; index < nbOfFiles; index ++) {
+                    if(!isFileMatchingAtLeastOne(packageFiles[index], package.files.excludes)) {
+                        newPackageFiles.push(packageFiles[index]);
                     }
                 }
                 packageFiles = newPackageFiles;

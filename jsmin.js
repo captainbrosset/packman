@@ -33,7 +33,8 @@ function getMinFileName(fileName) {
  * Minify a file on the disk
  * @param {String} source The complete file path to the file to be minified
  * @param {Boolean} mangle [Optional] Mangle variable names where possible, defaults to false
- * @param {String} destination [Optional] Used to know where the minified file should be saved (defaults to originalFileName-min.js).
+ * @param {String} destination [Optional] Used to know where the minified file should be saved
+ * (defaults to originalFileName-min.js).
  * @param {String} The destination file name that has been written
  */
 function minifyFile(source, mangle, destination) {
@@ -41,9 +42,9 @@ function minifyFile(source, mangle, destination) {
     var content = fs.readFileSync(source, "utf8");
     var minContent = getMinifiedContent(content, mangle);
 
-    var fd = fs.openSync(destination, "w");
-    fs.writeSync(fd, minContent);
-    fs.closeSync(fd);
+    var fileDescriptor = fs.openSync(destination, "w");
+    fs.writeSync(fileDescriptor, minContent);
+    fs.closeSync(fileDescriptor);
 
     return destination;
 }

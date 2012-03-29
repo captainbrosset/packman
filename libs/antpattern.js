@@ -1,9 +1,9 @@
 var StringUtils = {
-	startsWith: function(str, start) {
-		return str.substring(0, start.length) === start;
+	startsWith: function(string, start) {
+		return string.substring(0, start.length) === start;
 	},
-	endsWith: function(str, end) {
-		return str.substring(str.length - end.length) === end;
+	endsWith: function(string, end) {
+		return string.substring(string.length - end.length) === end;
 	}
 };
 

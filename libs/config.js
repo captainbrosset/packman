@@ -15,11 +15,11 @@ var defaultConfig = {
 function normalize(config, ref) {
 	var normalizedConfig = config;
 	ref = ref || defaultConfig;
-	for(var i in ref) {
-		if(typeof normalizedConfig[i] === "undefined") {
-			normalizedConfig[i] = ref[i];
- 		} else if(typeof normalizedConfig[i] === "object") {
- 			normalize(normalizedConfig[i], ref[i]);
+	for(var property in ref) {
+		if(typeof normalizedConfig[property] === "undefined") {
+			normalizedConfig[property] = ref[property];
+ 		} else if(typeof normalizedConfig[property] === "object") {
+ 			normalize(normalizedConfig[property], ref[property]);
  		}
  	}
 	return normalizedConfig;
