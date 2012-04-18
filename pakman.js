@@ -3,7 +3,6 @@
  * Takes in a config (json) file to tell it which files to merge, whether they should be minified and versioned.
  */
 
-
 var argv = require('optimist')
     .usage('Package files.\nUsage: $0 -c path/to/myconfig.json')
     .demand('c')

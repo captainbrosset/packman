@@ -84,7 +84,7 @@ function merge(filePaths, targetFilePath, source, destination, config, decorator
     decorator = getDecorator(decorator);
 
     var mergedFileContent = "";
-        
+
     mergedFileContent += decorator.onPackageStart(targetFilePath, config, userPackages);
 
     for(var i = 0, l = filePaths.length; i < l; i ++) {
