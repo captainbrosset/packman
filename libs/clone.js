@@ -11,5 +11,4 @@ function clone(obj) {
     return newObject;
 };
 
-
 module.exports.clone = clone;

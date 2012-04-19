@@ -1,6 +1,5 @@
 var fs = require("fs");
 
-
 function walkDir(directory, handler, originalDirectory) {
     var files = fs.readdirSync(directory);
     for(var i = 0, l = files.length; i < l; i ++) {
@@ -25,6 +24,5 @@ function getAllSourceFiles(directory) {
     });
     return sourceFiles;
 }
-
 
 module.exports.getAllSourceFiles = getAllSourceFiles;

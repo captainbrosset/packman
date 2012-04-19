@@ -1,6 +1,5 @@
 var antpattern = require("./antpattern.js");
 
-
 function isFileMatchingAtLeastOne(filePath, patterns) {
     for(var i = 0, l = patterns.length; i < l; i ++) {
         if(antpattern.match(patterns[i], filePath)) {
@@ -44,6 +43,5 @@ function resolveFilePaths(packages, allSourceFiles) {
 
     return packages;
 }
-
 
 module.exports.resolveFilePaths = resolveFilePaths;

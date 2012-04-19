@@ -1,14 +1,9 @@
 var fs = require("fs");
 
 var defaultConfig = {
-	config: {
-		jsmin: true,
-		mangle: false,
-		md5: true
-	},
 	source: "./",
 	destination: "./",
-	decorator: "./merger-defaultdecorator.js",
+	visitors: ["./visitors/js-separator.js"],
 	packages: {}
 };
 

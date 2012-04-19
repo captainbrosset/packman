@@ -262,13 +262,13 @@ function matchStrings(pattern, str) {
 
 if (!module.parent) {
 	// TODO: need some unit testing framework
-	console.log(match("**/*.js", "aria/test/text.js"), true);
-	console.log(match("**/*.jss", "aria/test/text.js"), false);
-	console.log(match("aria/core/**/*.js", "aria/core/text.js"), true);
-	console.log(match("aria/core/**/*.js", "aria/core/transport/IO.js"), true);
-	console.log(match("aria/core/**/*.js", "aria/core/transport/intf/IO.js"), true);
-	console.log(match("aria/core/*.js", "aria/core/transport/intf/IO.js"), false);
-	console.log(match("aria/core/*.js", "aria/core/IO.js"), true);
+	console.log(match("**/*.js", "aria/test/text.js") || "TEST FAILED");
+	console.log(!match("**/*.jss", "aria/test/text.js") || "TEST FAILED");
+	console.log(match("aria/core/**/*.js", "aria/core/text.js") || "TEST FAILED");
+	console.log(match("aria/core/**/*.js", "aria/core/transport/IO.js") || "TEST FAILED");
+	console.log(match("aria/core/**/*.js", "aria/core/transport/intf/IO.js") || "TEST FAILED");
+	console.log(!match("aria/core/*.js", "aria/core/transport/intf/IO.js") || "TEST FAILED");
+	console.log(match("aria/core/*.js", "aria/core/IO.js") || "TEST FAILED");
 } else {
 	module.exports.match = match;
 }
