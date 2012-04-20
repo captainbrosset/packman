@@ -1,14 +1,22 @@
 var clone = require("./clone.js").clone;
 
 var phases = {
-    onFileContent: "onFileContent",
-    onFileStart: "onFileStart",
-    onFileEnd: "onFileEnd",
-    onPackageName: "onPackageName",
+    // At the very start, even before any files have been packaged
+    onStart: "onStart",
+    // Before starting to package a set of files together
     onPackageStart: "onPackageStart",
+    // Before a file is being inserted into a package
+    onFileStart: "onFileStart",
+    // When inserting the content of a file into a package
+    onFileContent: "onFileContent",
+    // After a file has been inserted into a package
+    onFileEnd: "onFileEnd",
+    // After having packaged a set of files together
     onPackageEnd: "onPackageEnd",
-    onMultiMergeStart: "onMultiMergeStart",
-    onMultiMergeEnd: "onMultiMergeEnd"
+    // When deciding which name a package file should have
+    onPackageName: "onPackageName",
+    // At the end, when all packages are done
+    onEnd: "onEnd"
 };
 
 function overrideObject(src, dest) {
@@ -62,13 +70,11 @@ function getVisitorInstances(visitors, verbose) {
     return visitorInstances;
 }
 
-function runVisitorsOnPhase(phase, visitors, args, chainArg) {
+function runVisitorsOnPhase(phase, visitors, args) {
     for(var i = 0, l = visitors.length; i < l; i ++) {
         var visitor = visitors[i];
-        var visitorFunction = visitor[phases[phase]];
-        chainArg = visitorFunction(args, chainArg);
+        visitor[phases[phase]].apply(null, args);
     }
-    return chainArg;
 }
 
 module.exports.getVisitorInstances = getVisitorInstances;

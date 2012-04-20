@@ -40,6 +40,18 @@ function getPhysicalPath(logicalPath, directory) {
     return directory + logicalPath;
 }
 
+var PackageFile = function(path, content) {
+    this.path = path;
+    this.content = content;
+    this.currentFile = null;
+};
+var File = function(path, physicalPath, content, packageFile) {
+    this.path = path;
+    this.physicalPath = physicalPath;
+    this.content = content;
+    this.packageFile = packageFile;
+};
+
 /**
  * Merge a series of files into one package file
  * @param {Array} filePaths An array of strings, each one representing the complete path to a file to be merged
@@ -55,87 +67,62 @@ function merge(filePaths, targetFilePath, source, destination, userPackages, vis
     source = source || "./";
     destination = destination || "./";
 
-    var mergedFileContent = "";
+    var packageFileObject = new PackageFile(targetFilePath, "");
 
-    mergedFileContent += vh.runVisitorsOnPhase(vh.phases.onPackageStart, visitors, [targetFilePath, userPackages]);
+    vh.runVisitorsOnPhase(vh.phases.onPackageStart, visitors, [config, packageFileObject]);
 
     for(var i = 0, l = filePaths.length; i < l; i ++) {
         var filePath = filePaths[i];
         var physicalFilePath = getPhysicalPath(filePath, source);
-
-        mergedFileContent += vh.runVisitorsOnPhase(vh.phases.onFileStart, visitors, [filePath, targetFilePath, userPackages]);
-
         var fileContent = fs.readFileSync(physicalFilePath, "utf-8");
-        fileContent += vh.runVisitorsOnPhase(vh.phases.onFileContent, visitors, [filePath, fileContent, userPackages], fileContent);
+        var fileObject = new File(filePath, physicalFilePath, fileContent, packageFileObject);
 
-        if(!fileContent && verbose) {
-            console.warn("\n  !! The custom visitor generating " + targetFilePath + " needs to return a string from onFileContent().");
+        packageFileObject.currentFile = fileObject;
+
+        vh.runVisitorsOnPhase(vh.phases.onFileStart, visitors, [config, packageFileObject]);
+
+        vh.runVisitorsOnPhase(vh.phases.onFileContent, visitors, [config, fileObject]);
+
+        if(!fileObject.content && verbose) {
+            console.warn("\n  !! The visitors generating " + targetFilePath + " did not return any content.");
         }
 
-        mergedFileContent += fileContent;
-        mergedFileContent += vh.runVisitorsOnPhase(vh.phases.onFileEnd, visitors, [filePath, targetFilePath, userPackages]);
+        packageFileObject.content += fileObject.content;
+
+        vh.runVisitorsOnPhase(vh.phases.onFileEnd, visitors, [config, packageFileObject]);
     }
 
-    mergedFileContent += vh.runVisitorsOnPhase(vh.phases.onPackageEnd, visitors, [targetFilePath, userPackages]);
+    vh.runVisitorsOnPhase(vh.phases.onPackageEnd, visitors, [config, packageFileObject]);
+    vh.runVisitorsOnPhase(vh.phases.onPackageName, visitors, [config, packageFileObject]);
 
-    var newTargetFilePath = vh.runVisitorsOnPhase(vh.phases.onPackageName, visitors, [targetFilePath, mergedFileContent, userPackages], targetFilePath);
-    if(!newTargetFilePath) {
-        newTargetFilePath = targetFilePath;
-        if(verbose) {
-            console.warn("\n  !! The custom visitor generating " + targetFilePath + " needs to return a string from onPackageName(). Default name chosen.");
-        }
-    }
+    var packageContent = packageFileObject.content;
+    var packageFileName = getPhysicalPath(packageFileObject.path, destination);
 
-    var physicalPackageFilePath = getPhysicalPath(newTargetFilePath, destination);
+    writeContentToFile(packageFileName, packageContent);
 
-    writeContentToFile(physicalPackageFilePath, mergedFileContent);
-
-    return newTargetFilePath;
+    return packageFileName;
 }
 
 /**
  * Run the merge multiple times
- * @param {Object} config The only parameter is a config object telling multiMerge which packages to create and how.
- * Example usage:
- * <pre>
- * multiMerge({
- *   config: {
- *     jsmin: true,
- *     md5: true
- *   },
- *   visitor: "myVisitorModule.js",
- *   packages: {
- *     "myPackage1.js": {
- *       visitor: "localVisitorModule.js",
- *       config: {},
- *       files: [
- *         "file1.js",
- *         "file2.js"
- *       ]
- *     }
- *   }
- * });
- * </pre>
- * Config can be passed globally, but also for each package (first to be used is local, then global, then default)
- * The same applies for visitors.
- * @param {Object} userPackages The original packages list, as configured by the user, with un-resolved paths
+ * @param {Object} config Config object telling multiMerge which packages to create and how.
  * @param {Boolean} verbose Output more debug information
  */
-function multiMerge(config, userPackages, verbose) {
+function multiMerge(config, verbose) {
     var globalVisitors = vh.getVisitorInstances(config.visitors, verbose);
 
     var packages = config.packages;
 
-    vh.runVisitorsOnPhase(vh.phases.onMultiMergeStart, globalVisitors, [config, userPackages]);
+    vh.runVisitorsOnPhase(vh.phases.onStart, globalVisitors, [config]);
 
-    for(var packageName in packages) {
+    for(var packageName in config.resolvedPackages) {
         var localVisitors = globalVisitors;
 
-        if(packages[packageName].visitors) {
-            localVisitors = vh.getVisitorInstances(packages[packageName].visitors, verbose);
+        if(config.resolvedPackages[packageName].visitors) {
+            localVisitors = vh.getVisitorInstances(config.config.resolvedPackages[packageName].visitors, verbose);
         }
 
-        var files = packages[packageName].files;
+        var files = config.resolvedPackages[packageName].files;
 
         if(verbose) {
             console.log("\n  + " + packageName);
@@ -146,13 +133,16 @@ function multiMerge(config, userPackages, verbose) {
 
         var newPackageName = merge(files, packageName, config.source, config.destination, userPackages, localVisitors, verbose);
 
-        userPackages[newPackageName] = userPackages[packageName];
-        delete userPackages[packageName];
+        // Updating the original config to replace the package name with the new name
+        config.packages[newPackageName] = config.packages[packageName];
+        delete config.packages[packageName];
+        config.resolvedPackages[newPackageName] = config.resolvedPackages[packageName];
+        delete config.resolvedPackages[packageName];
 
         console.log("  >>> Package " + newPackageName + " created!");
     }
 
-    globalVisitor.onMultiMergeEnd(config, userPackages);
+    vh.runVisitorsOnPhase(vh.phases.onEnd, globalVisitors, [config]);
 }
 
 

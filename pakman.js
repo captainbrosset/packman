@@ -3,8 +3,6 @@
  * Takes in a config (json) file to tell it which files to merge, whether they should be minified and versioned.
  */
 
-// TODO : add a --watch option to run in the background and package when a file is saved
-
 var argv = require('optimist')
     .usage('Package files.\nUsage: $0 -c path/to/myconfig.json')
     .demand('c')
@@ -17,13 +15,14 @@ var argv = require('optimist')
     .argv
 ;
 
-var config = require("./libs/config.js").get(argv.c);
-var originalConfig = require("./libs/clone.js").clone(config);
+var config = require("./libs/config.js").get(argv.c)config.argv = argv;
 
 require("./libs/env.js").prepare(config.destination);
+
 var allSourceFiles = require("./libs/finder.js").getAllSourceFiles(config.source);
-var packages = require("./libs/resolver.js").resolveFilePaths(config.packages, allSourceFiles);
-config.packages = packages;
+var resolvedPackages = require("./libs/clone.js").clone(config.packages);
+resolvedPackages = require("./libs/resolver.js").resolveFilePaths(resolvedPackages, allSourceFiles);
+config.resolvedPackages = resolvedPackages;
 
 if(argv.v) {
     console.log("\n  Source: " + config.source);
@@ -32,6 +31,6 @@ if(argv.v) {
 }
 
 var merger = require("./merger.js");
-merger.multiMerge(config, originalConfig.packages, argv.v);
+merger.multiMerge(config, argv.v);
 
 console.log("\nPakman did it again! Have a great day!");

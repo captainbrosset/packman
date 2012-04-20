@@ -3,8 +3,9 @@ var fs = require("fs");
 var defaultConfig = {
 	source: "./",
 	destination: "./",
-	visitors: ["./visitors/js-separator.js"],
-	packages: {}
+	visitors: ["./visitors/sep.js"],
+	packages: {},
+    resolvedPackages: {}
 };
 
 function normalize(config, ref) {
