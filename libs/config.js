@@ -3,6 +3,7 @@ var fs = require("fs");
 var defaultConfig = {
 	source: "./",
 	destination: "./",
+    eraseIfExists: false,
 	visitors: ["./visitors/sep.js"],
 	packages: {},
     resolvedPackages: {}

@@ -1,10 +1,8 @@
 {
-    "config": {
-        "md5": true,
-        "mangle": true
-    },
     "source": "test/simple/src",
     "destination": "test/simple/build",
+    "eraseIfExists": false,
+    "visitors": ["./visitors/sep.js", "./visitors/md5.js"],
     "packages": {
         "bootstrap.js": {
             "files": [
@@ -14,6 +12,7 @@
             ]
         },
         "logger.js": {
+            "visitors": ["./visitors/jsmin.js", "./visitors/sep.js", "./visitors/md5.js"],
             "files": {
                 "includes": ["CORE/log/*.js"]
             }

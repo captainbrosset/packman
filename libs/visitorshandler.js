@@ -57,7 +57,7 @@ function getVisitorInstances(visitors, verbose) {
             if(visitor.substring(0,1) !== "/" && visitor.substring(0,2) !== "./") {
                 visitor = "./" + visitor;
             }
-            visitorInstance = require(visitor);
+            visitorInstance = require("../" + visitor);
         } catch(e) {
             if(verbose) {
                 console.warn("\n  !! Custom visitor " + visitor + " could not be loaded !!\n", e);

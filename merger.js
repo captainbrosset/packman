@@ -6,45 +6,22 @@
  */
 
 var fs = require("fs");
-var wrench = require("wrench");
 var vh = require("./libs/visitorshandler.js");
+var fu = require("./libs/fileutils.js");
 
 
-function getParentDirectoryPath(file) {
-    return file.substring(0, file.lastIndexOf("/"));
-}
-
-function writeContentToFile(file, content) {
-    if(content) {
-        if(file.indexOf("/") === -1) {
-            file = "./" + file;
-        }
-        wrench.mkdirSyncRecursive(getParentDirectoryPath(file), 0777);
-        var fd = fs.openSync(file, "w");
-        fs.writeSync(fd, content);
-        fs.closeSync(fd);
-    }
-}
-
-function getPhysicalPath(logicalPath, directory) {
-    if(directory.substring(directory.length - 1) !== "/") {
-        directory += "/";
-    }
-
-    if(logicalPath.substring(0, 1) == "/") {
-        return directory + logicalPath.substring(1);
-    }
-    if(logicalPath.substring(0, 2) == "./") {
-        return directory + logicalPath.substring(2);
-    }
-    return directory + logicalPath;
-}
-
+/**
+ * PackageFile object representation to be given to visitors
+ */
 var PackageFile = function(path, content) {
     this.path = path;
     this.content = content;
     this.currentFile = null;
 };
+
+/**
+ * Single text file object representation to be given to visitors
+ */
 var File = function(path, physicalPath, content, packageFile) {
     this.path = path;
     this.physicalPath = physicalPath;
@@ -63,9 +40,9 @@ var File = function(path, physicalPath, content, packageFile) {
  * @param {Boolean} verbose [Optional] Whether to output debug info
  * @return {String} The target file name that was created
  */
-function merge(filePaths, targetFilePath, source, destination, userPackages, visitors, verbose) {
-    source = source || "./";
-    destination = destination || "./";
+function merge(filePaths, targetFilePath, config, visitors, verbose) {
+    source = config.source || "./";
+    destination = config.destination || "./";
 
     var packageFileObject = new PackageFile(targetFilePath, "");
 
@@ -73,7 +50,7 @@ function merge(filePaths, targetFilePath, source, destination, userPackages, vis
 
     for(var i = 0, l = filePaths.length; i < l; i ++) {
         var filePath = filePaths[i];
-        var physicalFilePath = getPhysicalPath(filePath, source);
+        var physicalFilePath = fu.getPhysicalPath(filePath, source);
         var fileContent = fs.readFileSync(physicalFilePath, "utf-8");
         var fileObject = new File(filePath, physicalFilePath, fileContent, packageFileObject);
 
@@ -96,9 +73,9 @@ function merge(filePaths, targetFilePath, source, destination, userPackages, vis
     vh.runVisitorsOnPhase(vh.phases.onPackageName, visitors, [config, packageFileObject]);
 
     var packageContent = packageFileObject.content;
-    var packageFileName = getPhysicalPath(packageFileObject.path, destination);
+    var packageFileName = fu.getPhysicalPath(packageFileObject.path, destination);
 
-    writeContentToFile(packageFileName, packageContent);
+    fu.writeContentToFile(packageFileName, packageContent);
 
     return packageFileName;
 }
@@ -119,19 +96,24 @@ function multiMerge(config, verbose) {
         var localVisitors = globalVisitors;
 
         if(config.resolvedPackages[packageName].visitors) {
-            localVisitors = vh.getVisitorInstances(config.config.resolvedPackages[packageName].visitors, verbose);
+            localVisitors = vh.getVisitorInstances(config.resolvedPackages[packageName].visitors, verbose);
         }
 
         var files = config.resolvedPackages[packageName].files;
 
         if(verbose) {
             console.log("\n  + " + packageName);
+            if(config.packages[packageName].visitors) {
+                console.log("  + visitors " + config.packages[packageName].visitors);
+            } else {
+                console.log("  + visitors " + config.visitors);
+            }
             for(var i = 0, l = files.length; i < l; i ++) {
                 console.log("  | " + files[i]);
             }
         }
 
-        var newPackageName = merge(files, packageName, config.source, config.destination, userPackages, localVisitors, verbose);
+        var newPackageName = merge(files, packageName, config, localVisitors, verbose);
 
         // Updating the original config to replace the package name with the new name
         config.packages[newPackageName] = config.packages[packageName];

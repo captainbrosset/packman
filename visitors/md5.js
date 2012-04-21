@@ -1,5 +1,5 @@
 var md5 = require("../md5.js");
 
-module.exports.onPackageName = function(fileName, fileContent, config, userPackages) {
-    return md5.getVersionedFileName(fileName, fileContent);
+module.exports.onPackageName = function(config, packageFileObject) {
+    packageFileObject.path = md5.getVersionedFileName(packageFileObject.path, packageFileObject.content);
 };

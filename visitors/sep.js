@@ -2,26 +2,26 @@ function getFileNameExtension(fileName) {
     return fileName.substring(fileName.lastIndexOf("."));
 }
 
-module.exports.onPackageStart = function(packageFileName, config, userPackages) {
-    var ext = getFileNameExtension(packageFileName);
+module.exports.onPackageStart = function(config, packageFileObject) {
+    var ext = getFileNameExtension(packageFileObject.path);
 
     if(ext === ".js") {
-        return "// JS Package: " + packageFileName + "\n";
+        packageFileObject.content += "// JS Package: " + packageFileObject.path + "\n";
     } else if(ext === ".css") {
-        return "/* CSS Package: " + packageFileName + " */\n";
+        packageFileObject.content += "/* CSS Package: " + packageFileObject.path + " */\n";
     } else {
-        return "Package: " + packageFileName + "\n";
+        packageFileObject.content += "Package: " + packageFileObject.path + "\n";
     }
 };
 
-module.exports.onFileStart = function(fileName, packageFileName, config, userPackages) {
-    var ext = getFileNameExtension(packageFileName);
-    
+module.exports.onFileStart = function(config, packageFileObject) {
+    var ext = getFileNameExtension(packageFileObject.path);
+
     if(ext === ".js") {
-        return "\n\n// JS File: " + fileName + "\n";
+        packageFileObject.content += "\n\n// JS File: " + packageFileObject.currentFile.path + "\n";
     } else if(ext === ".css") {
-        return "\n\n/* CSS File: " + fileName + " */\n";
+        packageFileObject.content += "\n\n/* CSS File: " + packageFileObject.currentFile.path + " */\n";
     } else {
-        return "\n\nFile: " + fileName + "\n";
+        packageFileObject.content += "\n\nFile: " + packageFileObject.currentFile.path + "\n";
     }
 };
