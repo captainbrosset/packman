@@ -34,18 +34,4 @@ function get(configPath) {
 	return config;
 };
 
-
-if(!module.parent) {
-
-    var argv = require('optimist')
-        .usage('Normalize a config file.\nUsage: $0 -c path/to/myConfig.js')
-        .demand('c')
-        .alias('c', 'config')
-        .argv
-    ;
-
-    console.log(get(argv.c));
-
-} else {
-	module.exports.get = get;
-}
+module.exports.get = get;

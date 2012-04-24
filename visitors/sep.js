@@ -2,7 +2,7 @@ function getFileNameExtension(fileName) {
     return fileName.substring(fileName.lastIndexOf("."));
 }
 
-module.exports.onPackageStart = function(config, packageFileObject) {
+module.exports.onPackageStart = function(callback, config, packageFileObject) {
     var ext = getFileNameExtension(packageFileObject.path);
 
     if(ext === ".js") {
@@ -12,9 +12,11 @@ module.exports.onPackageStart = function(config, packageFileObject) {
     } else {
         packageFileObject.content += "Package: " + packageFileObject.path + "\n";
     }
+
+    callback();
 };
 
-module.exports.onFileStart = function(config, packageFileObject) {
+module.exports.onFileStart = function(callback, config, packageFileObject) {
     var ext = getFileNameExtension(packageFileObject.path);
 
     if(ext === ".js") {
@@ -24,4 +26,6 @@ module.exports.onFileStart = function(config, packageFileObject) {
     } else {
         packageFileObject.content += "\n\nFile: " + packageFileObject.currentFile.path + "\n";
     }
+
+    callback();
 };

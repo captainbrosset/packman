@@ -1,4 +1,5 @@
-var clone = require("./clone.js").clone;
+var clone = require("./clone.js");
+
 
 var phases = {
     // At the very start, even before any files have been packaged
@@ -20,7 +21,7 @@ var phases = {
 };
 
 function overrideObject(src, dest) {
-    var newObject = clone(src);
+    var newObject = clone.clone(src);
 
     for(var i in dest) {
         newObject[i] = dest[i];
@@ -33,7 +34,7 @@ function overrideObject(src, dest) {
  * Get the "normalized" visitor, so it is safe to call all of its functions
  */
 function normalizeVisitor(visitor) {
-    var empty = function() {};
+    var empty = function(callback) {callback()};
     var emptyVisitor = {};
     for (var p in phases) {
         emptyVisitor[phases[p]] = empty;
@@ -44,13 +45,14 @@ function normalizeVisitor(visitor) {
 /**
  * Try to load custom visitors given an array of file paths, and normalize them as we go
  * @param {Array} visitors The list of file paths of visitors to load
- * @param {Boolean} verbose Output more debug info
  * @return {Array} An array of visitor instance
  */
-function getVisitorInstances(visitors, verbose) {
+function getVisitorInstances(visitors) {
     var visitorInstances = [];
 
     for(var i = 0, l = visitors.length; i < l; i ++) {
+        logger.logDebug("Loading visitor " + visitors[i]);
+
         var visitor = visitors[i], visitorInstance = {};
 
         try {
@@ -59,9 +61,7 @@ function getVisitorInstances(visitors, verbose) {
             }
             visitorInstance = require("../" + visitor);
         } catch(e) {
-            if(verbose) {
-                console.warn("\n  !! Custom visitor " + visitor + " could not be loaded !!\n", e);
-            }
+            logger.logError("Custom visitor " + visitor + " could not be loaded, pakman will run anyway, just skipping this visitor", e);
         }
         
         visitorInstances.push(normalizeVisitor(visitorInstance));
@@ -70,10 +70,18 @@ function getVisitorInstances(visitors, verbose) {
     return visitorInstances;
 }
 
-function runVisitorsOnPhase(phase, visitors, args) {
-    for(var i = 0, l = visitors.length; i < l; i ++) {
-        var visitor = visitors[i];
-        visitor[phases[phase]].apply(null, args);
+/**
+ * Run all visitors on a given phase, asynchronously
+ */
+function runVisitorsOnPhase(phase, visitors, args, callback) {
+    var visitors = clone.cloneArray(visitors);
+    if(visitors.length === 0) {
+        callback();
+    } else {
+        var visitor = visitors.splice(0, 1)[0];
+        visitor[phases[phase]].apply(null, [function() {
+            runVisitorsOnPhase(phase, visitors, args, callback);
+        }].concat(args));
     }
 }
 
