@@ -1,15 +1,12 @@
 var fs = require("fs");
 
 var defaultConfig = {
-	config: {
-		jsmin: true,
-		mangle: false,
-		md5: true
-	},
 	source: "./",
 	destination: "./",
-	decorator: "./merger-defaultdecorator.js",
-	packages: {}
+    eraseIfExists: false,
+	visitors: ["./visitors/sep.js"],
+	packages: {},
+    resolvedPackages: {}
 };
 
 function normalize(config, ref) {
@@ -37,18 +34,4 @@ function get(configPath) {
 	return config;
 };
 
-
-if(!module.parent) {
-
-    var argv = require('optimist')
-        .usage('Normalize a config file.\nUsage: $0 -c path/to/myConfig.js')
-        .demand('c')
-        .alias('c', 'config')
-        .argv
-    ;
-
-    console.log(get(argv.c));
-
-} else {
-	module.exports.get = get;
-}
+module.exports.get = get;

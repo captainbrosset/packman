@@ -54,7 +54,7 @@ module.exports.onFileContent = function(fileName, fileContent, config, userPacka
     }
 };
 
-module.exports.onMultiMergeEnd = function(config, userPackages) {
+module.exports.onEnd = function(config, userPackages) {
     // compute map and add loader code
     var map = getAriaUrlMap(userPackages);
     var ariaMap = "\n\naria.core.DownloadMgr.updateUrlMap(" + JSON.stringify(map) + ");";

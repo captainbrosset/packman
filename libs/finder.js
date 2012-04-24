@@ -26,5 +26,4 @@ function getAllSourceFiles(directory) {
     return sourceFiles;
 }
 
-
 module.exports.getAllSourceFiles = getAllSourceFiles;

@@ -6,6 +6,7 @@ It is written in nodejs and requires:
 - uglify-js
 - wrench
 - fs-extra
+- less (only when using the less visitor)
 
 (these modules are under source control in node_modules)
 
@@ -14,28 +15,24 @@ pakman was born of the need to group several JavaScript files together in one bi
 Basic usage
 ===========
 
-	Usage: node ./pakman -c path/to/myconfig.json
+	Usage: node pakman -c path/to/myconfig.json -l 4
 
 	Options:
-	  -c, --config  Path to the config file to use  [required]
+	  -c, --config   Path to the config file to use                                                     [required]
+	  -l, --logging  Logging level (only errors = 1, also warnings = 2, also info = 3, also debug = 4)  [default: 1]
 
 Config files are written in json and look like this
 
 	{
-	    "config": {
-	        "md5": true,
-	        "mangle": true
-	    },
 	    "source": "test/src",
 	    "destination": "test/build",
+	    "visitors": ["myVisitor.js", "pakman/visitors/jsmin.js"]
 	    "packages": {
 	        "package1.js": {
-	        	"config": {...}
 	            "files": {
 	                "includes": ["**/*.js"],
 	                "excludes": ["**/*-test.js"]
-	            },
-	            "decorator": "mydecorator.js",
+	            }
 	        },
 	        "package2.js": {
 	        	"files": ["file1.js", "file2.js"]
@@ -43,127 +40,27 @@ Config files are written in json and look like this
 	    }
 	}
 
-The first level of the config contains general configuration to be applied for all packages as well as the source and destination folder to work on.
+The first level of the config contains general configuration like the source and destination folders to work on.
 
-Then, inside the `packages` node, is the list of all packages to be created. Each package definition can also override the config and decorator settings.
+Then, inside the `packages` node, is the list of all packages to be created.
 
-Files to be included inside a package are given in the `files` sub-node and can be either an array of file names, or an object with either `includes` or `excludes` or both. These sub-properties are arrays of file names or ant pattern (?, *, **).
+Files to be included inside a package are given in the `files` sub-node and can be either an array of file names, or an object with either `includes` or `excludes` or both. These sub-properties are arrays of file names or ant pattern (?, *, **). If an array of files is provided, the files will be merged in this order.
 
+Visitors
+========
 
-Note that pakman is based on several standalone tools that can also be used from the command line:
+You may have noticed that the configuration accepts a visitors array. A visitor is a piece of code that transform package content, package name and file content while things are done. This is the way to get packages perfectly fit to your needs.
 
-jsmin
-=====
+Examples of visitors include (but are not restricted to) including separators between the files, minifying file content, renaming package files to include a version number, processing less css or coffeescript files.
 
-Minify a JavaScript file.
+A bunch of existing visitors can already be used from the visitors folder.
 
-	Usage: node jsmin -s path/to/myFile.js -m
+Visitors can be specified either globally at the top level of the config file, or locally, within each package definition.
 
-	Options:
-	  -s, --source  Path to the file to be minified  [required]
-	  -m, --mangle  Mangle variable names            [boolean]
+A visitor in pakman is simply a nodejs module that exports the following any of the following functions:
 
-md5
-===
+	DOCUMENTATION TO BE INSERTED HERE
 
-Version a file using the MD5 hash.
+Visitors' methods can be asynchronous if needed, this is why they accept a callback as their first parameter. Once their processing is done, they must call the callback to allow pakman to continue looping on other visitors, and ultimately on other files and packages.
 
-	Usage: node md5 -s path/to/myFile.js
-
-	Options:
-	  -s, --source   Path to the file to be versioned                              [required]
-	  -t, --target   Target directory to save the file to                          [default: "where the source is"]
-	  -p, --pattern  Destination file pattern (use [name], [md5] and [extension])  [default: "[name]-[md5].[extension]"]
-
-merger
-======
-
-Merge files together.
-
-	Usage: node merger -f file1.js file2.js file3.js -t pack.js --jsmin --md5 -d mydecorator.js
-
-	Options:
-	  -f, --files      List of files to be packaged                                [required]
-	  -t, --target     Target package file (name will be changed if md5 is passed  [required]
-	  -m, --jsmin      Minify javascript files (only applies to .js files)         [boolean]  [default: true]
-	  -v, --md5        Version the target package with md5 hash                    [boolean]  [default: false]
-	  -d, --decorator  The decorator module to be used                             [default: "./merger-defaultdecorator.js"]
-
-Using as node modules
-=====================
-
-The 3 command line tools above are also nodejs modules, therefore they can be required by other modules and used as part of a bigger program.
-
-	var merger = require("./merger.js");
-	merger.merge(["file1.js", "file2.js"], "pack.js");
-
-Decorators
-==========
-
-You may have noticed that the merger tool can take a decorator as argument (or command line parameter). The decorator is the piece of code that does the actual merge of files. The default decorator is `merger-defaultdecorator.js`.
-
-A decorator in pakman is a nodejs module that exports the following 6 functions:
-
-	/**
-	 * Called to alter the physical name of the package file before it is saved to the disk. Used to version the filename.
-	 * @param {String} fileName The logical package filename, as configured
-	 * @param {String} fileContent The content of the package file
-	 * @param {Object} config A resolved config object, as specified in the package config, or global config
-	 * @param {Object} userPackages The list of packages as configured in the config, with unresolved paths
-	 * @return {String} The physical file name
-	 */
-	module.exports.onPackageName = function(fileName, fileContent, config, userPackages) {};
-
-	/**
-	 * Called when a package file starts. Used to output header information into the file
-	 * @param {String} fileName The logical package filename, as configured
-	 * @param {Object} config A resolved config object, as specified in the package config, or global config
-	 * @param {Object} userPackages The list of packages as configured in the config, with unresolved paths
-	 * @return {String} The content to put an the top of the packaged file
-	 */
-	module.exports.onPackageStart = function(fileName, config, userPackages) {};
-
-	/**
-	 * Called when a package file ends.
-	 * @param {String} fileName The logical package filename, as configured
-	 * @param {Object} config A resolved config object, as specified in the package config, or global config
-	 * @param {Object} userPackages The list of packages as configured in the config, with unresolved paths
-	 * @return {String} The content to put an the top of the packaged file
-	 */
-	module.exports.onPackageEnd = function(fileName, config, userPackages) {};
-
-	/**
-	 * Called before the content of a source file is put into a package. Used to add delimiters to the package
-	 * @param {String} fileName The source folder relative file path
-	 * @param {String} packageFileName The logical package filename, as configured
-	 * @param {Object} config A resolved config object, as specified in the package config, or global config
-	 * @param {Object} userPackages The list of packages as configured in the config, with unresolved paths
-	 * @return {String} The content to put in the packaged file
-	 */
-	module.exports.onFileStart = function(fileName, packageFileName, config, userPackages) {};
-
-	/**
-	 * Called when the content of a source file is being put into a package. Used to process the source code
-	 * @param {String} fileName The source folder relative file path
-	 * @param {String} fileContent The content of the file
-	 * @param {Object} config A resolved config object, as specified in the package config, or global config
-	 * @param {Object} userPackages The list of packages as configured in the config, with unresolved paths
-	 * @return {String} The content to put in the packaged file
-	 */
-	module.exports.onFileContent = function(fileName, fileContent, config, userPackages) {};
-
-	/**
-	 * Called after the content of a source file is put into a package. Used to add delimiters to the package
-	 * @param {String} fileName The source folder relative file path
-	 * @param {String} packageFileName The logical package filename, as configured
-	 * @param {Object} config A resolved config object, as specified in the package config, or global config
-	 * @param {Object} userPackages The list of packages as configured in the config, with unresolved paths
-	 * @return {String} The content to put in the packaged file
-	 */
-	module.exports.onFileEnd = function(fileName, packageFileName, config, userPackages) {};
-
-Each of these functions must return a string that will be used to output the package content or file name. The goal of the decorator is to process file content or insert separators if needed.
-
-The default decorator minifies the content of JavaScript files and versions the package file name with the corresponding md5 hash.
-
-The config object passed to the merger is passed to each function.
+Note that since the config is passed as argument to the above methods, you can add extra data to it to be used by visitors.

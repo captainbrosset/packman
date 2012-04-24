@@ -59,7 +59,7 @@ module.exports.onFileEnd = function(fileName, packageFileName, config, userPacka
     return ";";
 };
 
-module.exports.onMultiMergeEnd = function(config, userPackages) {
+module.exports.onEnd = function(config, userPackages) {
     if(config.config.createLoaderMap) {
         // compute map and add loader code
         var map = getAriaUrlMap(userPackages);

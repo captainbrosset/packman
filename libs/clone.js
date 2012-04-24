@@ -11,5 +11,13 @@ function clone(obj) {
     return newObject;
 };
 
+function cloneArray(array) {
+    var a = [];
+    for(var i = 0, l = array.length; i < l; i ++) {
+        a.push(array[i]);
+    }
+    return a;
+}
 
 module.exports.clone = clone;
+module.exports.cloneArray = cloneArray;

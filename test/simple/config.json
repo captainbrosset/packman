@@ -1,10 +1,8 @@
 {
-    "config": {
-        "md5": true,
-        "mangle": true
-    },
     "source": "test/simple/src",
     "destination": "test/simple/build",
+    "eraseIfExists": false,
+    "visitors": ["./visitors/sep.js", "./visitors/jsmin.js", "test"],
     "packages": {
         "bootstrap.js": {
             "files": [
@@ -19,12 +17,15 @@
             }
         },
         "utils.js": {
-            "config": {
-                "jsmin": false
-            },
             "files": {
                 "includes": ["CORE/**/*.js"],
                 "excludes": ["CORE/*.js", "CORE/log/*"]
+            }
+        },
+        "styles.css": {
+            "visitors": ["./visitors/less.js"],
+            "files": {
+                "includes": ["**/*.less"]
             }
         }
     }
