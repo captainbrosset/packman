@@ -1,5 +1,2 @@
-- visitors to be chained. One per type of visiting
-- implement some default visitors: less, coffeescript, uglify, md5, at compiler
-- the destination should not be entirely deleted and recreated everytime, if it already exists, just override if a file is already here with the same name
-- move the top level node tools: jsmin, md5, merger to another place (libs?), they are useful but should not be here, and should be explained somewhere else in the readme.md (maybe need pages on github for doc in fact)
 - add a --watch option to run in the background and package when a file is saved
+- not working when invoked from outside the pakman dir (visitors can't be found, neither custom ones, nor the pakman default ones)
