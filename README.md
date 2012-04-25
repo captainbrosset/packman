@@ -55,12 +55,51 @@ Examples of visitors include (but are not restricted to) including separators be
 
 A bunch of existing visitors can already be used from the visitors folder.
 
-Visitors can be specified either globally at the top level of the config file, or locally, within each package definition.
+Visitors can be specified either globally at the top level of the config file, or locally, within each package definition. Visitors are configure through an array, and are, therefore, run in a sequence, one after the other.
 
-A visitor in pakman is simply a nodejs module that exports the following any of the following functions:
+A visitor in pakman is simply a nodejs module that exports any of the following functions:
 
-	DOCUMENTATION TO BE INSERTED HERE
+	// At the very start, even before any files have been packaged
+	onStart: function(callback, config) {},
+	
+	// Before starting to package a set of files together
+	onPackageStart: function(callback, config, packageFileObject) {},
+	
+	// Before a file is being inserted into a package
+	onFileStart: function(callback, config, packageFileObject) {},
+	
+	// When inserting the content of a file into a package
+	onFileContent: function(callback, config, fileObject) {},
+	
+	// After a file has been inserted into a package
+	onFileEnd: function(callback, config, packageFileObject) {},
+	
+	// After having packaged a set of files together
+	onPackageEnd: function(callback, config, packageFileObject) {},
+	
+	// When deciding which name a package file should have
+	onPackageName: function(callback, config, packageFileObject) {},
+	
+	// At the end, when all packages are done
+	onEnd: function(callback, config) {}
 
 Visitors' methods can be asynchronous if needed, this is why they accept a callback as their first parameter. Once their processing is done, they must call the callback to allow pakman to continue looping on other visitors, and ultimately on other files and packages.
 
 Note that since the config is passed as argument to the above methods, you can add extra data to it to be used by visitors.
+
+Most visitors' methods accept a `packageFileObject` as argument while the `onFileContent` method accepts a `fileObject` argument, here are their interfaces:
+
+	PackageFile = {
+	    path: "the logical path of the package file",
+	    content: "the current content of the package file",
+	    currentFile: "reference to the File instance that is currently being packaged if any"
+	};
+	
+	File =  {
+	    path: "the logical path of the file",
+	    physicalPath: "the physical path of the file",
+	    content: "the current content of the file",
+	    packageFile: "reference to the PackageFile including this file"
+	};
+
+Most visitors will want to modify the fileObject.content on the fly (to minify javascript for instance) or to append content to the packageFileObject.content (to insert separators for instance).
