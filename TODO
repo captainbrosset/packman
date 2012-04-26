@@ -1,4 +1,1 @@
 - add a --watch option to run in the background and package when a file is saved
-- not working when invoked from outside the pakman dir (visitors can't be found, neither custom ones, nor the pakman default ones)
-- remove the onPackageName, this is useless since the same can be achieved by changing the name from within onPackageStart or onPackageEnd
-- configure built-in visitors just by their names, other custom visitors by path

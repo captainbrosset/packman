@@ -3,6 +3,17 @@
  * Takes in a config (json) file to tell it which files to merge, and how
  */
 
+console.log([
+"  _____       _                          ",
+" |  __ \\     | |                         ",
+" | |__) |__ _| | ___ __ ___   __ _ _ __  ",
+" |  ___// _` | |/ / '_ ` _ \\ / _` | '_ \\ ",
+" | |   | (_| |   <| | | | | | (_| | | | |",
+" |_|    \\__,_|_|\\_\\_| |_| |_|\\__,_|_| |_|",
+"                   pack it up like a star",
+""
+].join("\n"));
+
 var startTime = new Date().getTime();
 
 require("./libs/logger.js");
@@ -21,25 +32,31 @@ var argv = require('optimist')
 logger.level = argv.l;
 
 var config = require("./libs/config.js").get(argv.c)
-config.argv = argv;
 
-var isEnvReady = require("./libs/env.js").prepare(config.destination, config.eraseIfExists);
+if(config !== null) {
+    config.argv = argv;
 
-if(isEnvReady) {
-    var allSourceFiles = require("./libs/finder.js").getAllSourceFiles(config.source);
-    var resolvedPackages = require("./libs/clone.js").clone(config.packages);
-    resolvedPackages = require("./libs/resolver.js").resolveFilePaths(resolvedPackages, allSourceFiles);
-    config.resolvedPackages = resolvedPackages;
+    var isEnvReady = require("./libs/env.js").prepare(config.destination, config.eraseIfExists);
 
-    logger.logInfo("Getting started with: source=" + config.source + ", destination=" + config.destination + ", eraseIfExists=" + config.eraseIfExists + "\n");
+    if(isEnvReady) {
+        var allSourceFiles = require("./libs/finder.js").getAllSourceFiles(config.source);
 
-    var merger = require("./merger.js");
-    merger.merge(config, function() {
-        console.log("");
-        var time = ((new Date().getTime()) - startTime)/1000;
-        logger.logInfo("Pakman did it again! Have a great day! (" + time + " sec)");
-    });
-} else {
-    logger.logWarning("Pakman could not prepare the destination directory, there's an existing file at " + config.destination);
-    logger.logWarning("Make sure you configure the proper destination directory path or set the 'eraseIfExists' config flag to true.");
+        if(allSourceFiles.length > 0) {
+            var resolvedPackages = require("./libs/clone.js").clone(config.packages);
+            resolvedPackages = require("./libs/resolver.js").resolveFilePaths(resolvedPackages, allSourceFiles);
+            config.resolvedPackages = resolvedPackages;
+
+            logger.logInfo("Getting started with: source=" + config.source + ", destination=" + config.destination + ", eraseIfExists=" + config.eraseIfExists + "\n");
+
+            var merger = require("./merger.js");
+            merger.merge(config, function() {
+                console.log("");
+                var time = ((new Date().getTime()) - startTime)/1000;
+                console.log(" Pakman did it again! Have a great day! (" + time + " sec)");
+            });
+        }
+    } else {
+        logger.logWarning("Pakman could not prepare the destination directory, there's an existing file at " + config.destination);
+        logger.logWarning("Make sure you configure the proper destination directory path or set the 'eraseIfExists' config flag to true.");
+    }
 }

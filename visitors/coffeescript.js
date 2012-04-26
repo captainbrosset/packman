@@ -1,7 +1,17 @@
-// TODO
+var coffee = require("coffee-script");
 
-/*module.exports.onFileContent = function(callback, config, fileObject) {
-    console.log("##### compiling coffee script file to js now ... " + fileObject.path);
+function getFileNameExtension(fileName) {
+    return fileName.substring(fileName.lastIndexOf("."));
+}
+
+function getFileNameName(fileName) {
+    return fileName.substring(0, fileName.lastIndexOf("."));
+}
+
+module.exports.onFileContent = function(callback, config, fileObject) {
+    if(getFileNameExtension(fileObject.path) === ".coffee") {
+        fileObject.content = coffee.compile(fileObject.content);
+        fileObject.path = getFileNameName + ".js";
+    }
     callback();
 };
-*/

@@ -1,6 +1,5 @@
 var fs = require("fs");
 
-
 function walkDir(directory, handler, originalDirectory) {
     var files = fs.readdirSync(directory);
     for(var i = 0, l = files.length; i < l; i ++) {
@@ -20,9 +19,14 @@ function walkDir(directory, handler, originalDirectory) {
 
 function getAllSourceFiles(directory) {
     var sourceFiles = [];
-    walkDir(directory, function(filePath) {
-        sourceFiles.push(filePath);
-    });
+    try {
+        walkDir(directory, function(filePath) {
+            sourceFiles.push(filePath);
+        });
+    } catch(e) {
+        logger.logError("Could not get the source files from " + directory);
+        logger.logDebug(e);
+    }
     return sourceFiles;
 }
 

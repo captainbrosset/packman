@@ -23,15 +23,22 @@ function normalize(config, ref) {
 };
 
 function get(configPath) {
-	var data = fs.readFileSync(configPath, "utf8"), config = {};
-
 	try {
-		config = normalize(JSON.parse(data));
-	} catch(configReadingError) {
-		config = normalize({});
-	}
+		var data = fs.readFileSync(configPath, "utf8");
+		var config = {};
 
-	return config;
+		try {
+			config = normalize(JSON.parse(data));
+		} catch(configReadingError) {
+			config = normalize({});
+		}
+
+		return config;
+	} catch (e) {
+		logger.logError("Could not find configuration file " + configPath);
+		logger.logDebug(e);
+		return null;
+	}
 };
 
 module.exports.get = get;

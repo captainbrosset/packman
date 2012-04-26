@@ -77,9 +77,6 @@ A visitor in pakman is simply a nodejs module that exports any of the following 
 	// After having packaged a set of files together
 	onPackageEnd: function(callback, config, packageFileObject) {},
 	
-	// When deciding which name a package file should have
-	onPackageName: function(callback, config, packageFileObject) {},
-	
 	// At the end, when all packages are done
 	onEnd: function(callback, config) {}
 

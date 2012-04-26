@@ -51,7 +51,7 @@ function getVersionedFileName(filePath, content, targetDir, pattern) {
     return getNewFileName(targetDir, bareFileName, md5, extension, pattern);
 }
 
-module.exports.onPackageName = function(callback, config, packageFileObject) {
+module.exports.onPackageEnd = function(callback, config, packageFileObject) {
     packageFileObject.path = getVersionedFileName(packageFileObject.path, packageFileObject.content);
     callback();
 };

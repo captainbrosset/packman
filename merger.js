@@ -81,14 +81,12 @@ function mergeOnePackage(filePaths, targetFilePath, config, visitors, callback) 
 
         sequence(functions, [], function() {
             vh.runVisitorsOnPhase(vh.phases.onPackageEnd, visitors, [config, packageFileObject], function() {
-                vh.runVisitorsOnPhase(vh.phases.onPackageName, visitors, [config, packageFileObject], function() {
-                    var packageContent = packageFileObject.content;
-                    var packageFileName = fu.getPhysicalPath(packageFileObject.path, destination);
+                var packageContent = packageFileObject.content;
+                var packageFileName = fu.getPhysicalPath(packageFileObject.path, destination);
 
-                    fu.writeContentToFile(packageFileName, packageContent);
+                fu.writeContentToFile(packageFileName, packageContent);
 
-                    callback(packageFileName);
-                });
+                callback(packageFileName);
             });
         });
     });

@@ -14,8 +14,6 @@ var phases = {
     onFileEnd: "onFileEnd",
     // After having packaged a set of files together
     onPackageEnd: "onPackageEnd",
-    // When deciding which name a package file should have
-    onPackageName: "onPackageName",
     // At the end, when all packages are done
     onEnd: "onEnd"
 };
@@ -42,6 +40,34 @@ function normalizeVisitor(visitor) {
     return overrideObject(emptyVisitor, visitor);
 }
 
+// Is this a visitor from the default pakman install
+function isDefaultVisitor(path) {
+    return path.indexOf(".") === -1;
+}
+
+function isAbsolutePath(path) {
+    return path.substring(0, 1) === "/";
+}
+
+function getVisitorInstance(visitorPath) {
+    var visitorInstance = {};
+    try {
+        if(isDefaultVisitor(visitorPath)) {
+            // If this is a default visitor (myVisitor)
+            visitorPath = "../visitors/" + visitorPath + ".js";
+
+        } else if(!isAbsolutePath(visitorPath)) {
+            // If the path does not start with / (myVisitor.js or path/to/visitor.js or ./path/to/myvisitor.js)
+            visitorPath = process.cwd() + "/" + visitorPath;
+        }
+
+        visitorInstance = require(visitorPath);
+    } catch(e) {
+        logger.logError("Custom visitor " + visitorPath + " could not be loaded, pakman will run anyway, just skipping this visitor", e);
+    }
+    return visitorInstance;
+}
+
 /**
  * Try to load custom visitors given an array of file paths, and normalize them as we go
  * @param {Array} visitors The list of file paths of visitors to load
@@ -52,19 +78,7 @@ function getVisitorInstances(visitors) {
 
     for(var i = 0, l = visitors.length; i < l; i ++) {
         logger.logDebug("Loading visitor " + visitors[i]);
-
-        var visitor = visitors[i], visitorInstance = {};
-
-        try {
-            if(visitor.substring(0,1) !== "/" && visitor.substring(0,2) !== "./") {
-                visitor = "./" + visitor;
-            }
-            visitorInstance = require("../" + visitor);
-        } catch(e) {
-            logger.logError("Custom visitor " + visitor + " could not be loaded, pakman will run anyway, just skipping this visitor", e);
-        }
-        
-        visitorInstances.push(normalizeVisitor(visitorInstance));
+        visitorInstances.push(normalizeVisitor(getVisitorInstance(visitors[i])));
     }
 
     return visitorInstances;

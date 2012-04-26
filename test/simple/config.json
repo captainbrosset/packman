@@ -1,8 +1,8 @@
 {
-    "source": "test/simple/src",
-    "destination": "test/simple/build",
+    "source": "pakman/test/simple/src",
+    "destination": "pakman/test/simple/build",
     "eraseIfExists": false,
-    "visitors": ["./visitors/sep.js", "./visitors/jsmin.js", "test"],
+    "visitors": ["coffeescript", "sep", "jsmin", "md5"],
     "packages": {
         "bootstrap.js": {
             "files": [
@@ -13,7 +13,7 @@
         },
         "logger.js": {
             "files": {
-                "includes": ["CORE/log/*.js"]
+                "includes": ["CORE/log/*.js", "**/*.coffee"]
             }
         },
         "utils.js": {
@@ -23,7 +23,7 @@
             }
         },
         "styles.css": {
-            "visitors": ["./visitors/less.js"],
+            "visitors": ["pakman/visitors/less.js"],
             "files": {
                 "includes": ["**/*.less"]
             }
