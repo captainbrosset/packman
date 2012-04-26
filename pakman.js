@@ -49,7 +49,7 @@ if(config !== null) {
 
             logger.logInfo("Getting started with: source=" + config.source + ", destination=" + config.destination + ", eraseIfExists=" + config.eraseIfExists + "\n");
 
-            var merger = require("./merger.js");
+            var merger = require("./libs/merger.js");
 
             merger.merge(config, function() {
                 console.log("");
