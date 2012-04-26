@@ -1,4 +1,8 @@
 - add a --watch option to run in the background and package when a file is saved (fs.watch doesn's work that great ...)
-- yaml configuration file
 - command line `pakman` rather than node path/to/pakman
 - npm dependencies
+- move merger.js to libs
+- implement the conditional visitor
+- implement a simple versioning visitor (based on a version tag given in cfg, put all destination files in a new /tag/ directory to avoid having to repeat this tag throughout the cfg)
+- implement the special AT visitors .... 
+- do a real doc (how to standard project)

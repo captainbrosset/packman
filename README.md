@@ -6,7 +6,9 @@ It is written in nodejs and requires:
 - uglify-js
 - wrench
 - fs-extra
+- js-yaml
 - less (only when using the less visitor)
+- coffee-script (only when using the coffeescript visitor)
 
 (these modules are under source control in node_modules)
 
@@ -21,24 +23,31 @@ Basic usage
 	  -c, --config   Path to the config file to use                                                     [required]
 	  -l, --logging  Logging level (only errors = 1, also warnings = 2, also info = 3, also debug = 4)  [default: 1]
 
-Config files are written in json and look like this
+Config files are written in yaml and look like this
 
-	{
-	    "source": "test/src",
-	    "destination": "test/build",
-	    "visitors": ["myVisitor.js", "pakman/visitors/jsmin.js"]
-	    "packages": {
-	        "package1.js": {
-	            "files": {
-	                "includes": ["**/*.js"],
-	                "excludes": ["**/*-test.js"]
-	            }
-	        },
-	        "package2.js": {
-	        	"files": ["file1.js", "file2.js"]
-	        }
-	    }
-	}
+	source: my/source/dir
+	destination: my/target/dir
+	visitors:
+	    - coffeescript
+	    - jsmin
+	packages:
+	    main.js:
+	        files:
+	            - CORE.js
+	            - CORE/Object.js
+	            - CORE/Logging.js
+	    utils.js:
+	        files:
+	            includes:
+	                - CORE/utils/**/*.js
+	            excludes:
+	            	- CORE/utils/specials/*.js
+	    css/styles.css:
+	        visitors:
+	            - less
+	        files:
+	            includes:
+	                - **/*.less
 
 The first level of the config contains general configuration like the source and destination folders to work on.
 

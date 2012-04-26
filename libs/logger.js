@@ -12,7 +12,7 @@ function formatMessage(message, level) {
         var minutes = padTime(timestamp.getMinutes());
         var seconds = padTime(timestamp.getSeconds());*/
 
-        return /*"[" + hours + ":" + minutes + ":" + seconds + "] */"[" + level.toUpperCase().substring(0,4) + "] " + message;
+        return /*"[" + hours + ":" + minutes + ":" + seconds + "] */" [" + level.toUpperCase().substring(0,4) + "] " + message;
     }
 }
 
