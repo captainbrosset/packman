@@ -16,6 +16,7 @@ console.log([
 
 var startTime = new Date().getTime();
 
+var fs = require("fs");
 require("./libs/logger.js");
 
 var argv = require('optimist')
@@ -49,6 +50,7 @@ if(config !== null) {
             logger.logInfo("Getting started with: source=" + config.source + ", destination=" + config.destination + ", eraseIfExists=" + config.eraseIfExists + "\n");
 
             var merger = require("./merger.js");
+
             merger.merge(config, function() {
                 console.log("");
                 var time = ((new Date().getTime()) - startTime)/1000;

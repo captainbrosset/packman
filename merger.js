@@ -40,7 +40,7 @@ function mergeOneFile(filePath, sourceDir, packageFileObject, config, visitors, 
     vh.runVisitorsOnPhase(vh.phases.onFileStart, visitors, [config, packageFileObject], function() {
         vh.runVisitorsOnPhase(vh.phases.onFileContent, visitors, [config, fileObject], function() {
             if(!fileObject.content) {
-                logger.logWarning("The visitors generating " + targetFilePath + " did not return any content.");
+                logger.logWarning("The visitors generating " + fileObject.path + " did not return any content.");
             }
 
             packageFileObject.content += fileObject.content;
