@@ -1,3 +1,4 @@
+<pre>
   _____       _
  |  __ \     | |
  | |__) |__ _| | ___ __ ___   __ _ _ __
@@ -5,7 +6,7 @@
  | |   | (_| |   <| | | | | | (_| | | | |
  |_|    \__,_|_|\_\_| |_| |_|\__,_|_| |_|
                     pack it up like a man
-
+</pre>
 
 pakman is a command line tool that can package text files.
 
