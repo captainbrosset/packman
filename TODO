@@ -5,3 +5,5 @@
 - implement a simple versioning visitor (based on a version tag given in cfg, put all destination files in a new /tag/ directory to avoid having to repeat this tag throughout the cfg)
 - implement the special AT visitors .... 
 - do a real doc (how to standard project)
+- for * escape of YAML-JSON, don't escape, replace by a token like [asterisk] or a random sequence, easier
+- instead of crappy md5, do the first few chars of the sha1, and give an example (in doc or visitor) that creates the piece of HTML that includes the files (create an include.html for instance that has the <link href=...sha1.css> and <script src=...sha1.js> or maybe just a piece of txt that has the map or something)
