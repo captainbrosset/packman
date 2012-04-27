@@ -1,3 +1,12 @@
+  _____       _
+ |  __ \     | |
+ | |__) |__ _| | ___ __ ___   __ _ _ __
+ |  ___// _` | |/ / '_ ` _ \ / _` | '_ \
+ | |   | (_| |   <| | | | | | (_| | | | |
+ |_|    \__,_|_|\_\_| |_| |_|\__,_|_| |_|
+                    pack it up like a man
+
+
 pakman is a command line tool that can package text files.
 
 It is written in nodejs and requires:
@@ -11,9 +20,9 @@ It is written in nodejs and requires:
 - less (only when using the less visitor)
 - coffee-script (only when using the coffeescript visitor)
 
-(these modules are under source control in node_modules)
+(these modules are under source control in node_modules, but I'm working on npm-ing everything).
 
-pakman was born of the need to group several JavaScript files together in one big, minified, versioned JavaScript file to improve websites' performance, therefore this is its most common use case. However, pakman works with any type of text files.
+pakman was born of the need to group several JavaScript files together in one big, minified, versioned JavaScript file to improve websites' performance, therefore this is its most common use case. However, pakman works with any type of text files and can package any number of files in any number of crazy ways you want.
 
 Basic usage
 ===========
@@ -60,6 +69,8 @@ Visitors
 ========
 
 You may have noticed that the configuration accepts a visitors array. A visitor is a piece of code that transform package content, package name and file content while things are done. This is the way to get packages perfectly fit to your needs.
+
+You can imagine using visitors for pretty much anything you want. Visitors can alter the file content but also package file names and locations or simply output other files.
 
 Examples of visitors include (but are not restricted to) including separators between the files, minifying file content, renaming package files to include a version number, processing less css or coffeescript files.
 
