@@ -32,7 +32,15 @@ var File = function(path, physicalPath, content, packageFile) {
 
 function mergeOneFile(filePath, sourceDir, packageFileObject, config, visitors, callback) {
     var physicalFilePath = fu.getPhysicalPath(filePath, sourceDir);
-    var fileContent = fs.readFileSync(physicalFilePath, "utf-8");
+    try {
+        var fileContent = fs.readFileSync(physicalFilePath, "utf-8");
+    } catch (e) {
+        logger.logError("Could not find file " + physicalFilePath + " to be merged");
+        logger.logDebug(e.message);
+        callback();
+        return;
+    }
+
     var fileObject = new File(filePath, physicalFilePath, fileContent, packageFileObject);
 
     packageFileObject.currentFile = fileObject;
@@ -67,7 +75,6 @@ function mergeOnePackage(filePaths, targetFilePath, config, visitors, callback) 
     var packageFileObject = new PackageFile(targetFilePath, "");
 
     vh.runVisitorsOnPhase(vh.phases.onPackageStart, visitors, [config, packageFileObject], function() {
-
         functions = [];
         for(var i = 0, l = filePaths.length; i < l; i ++) {
             (function() {

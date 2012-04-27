@@ -2,31 +2,31 @@ source: test/simple/src
 destination: test/simple/build
 eraseIfExists: false
 visitors:
-    - coffeescript
-    - sep
-    - jsmin
-    - md5
+- coffeescript
+- sep
+- uglify
+- md5
 packages:
     bootstrap.js:
         files:
-            - CORE.js
-            - CORE/Object.js
-            - CORE/Logging.js
+        - 'CORE.js'
+        - 'CORE/Object.js'
+        - 'CORE/Logging.js'
     logger.js:
         files:
             includes:
-                - CORE/log/*.js
-                - **/*.coffee
+            - 'CORE/log/*.js'
+            - '**/*.coffee'
     utils.js:
         files:
             includes:
-                - CORE/**/*.js
+            - 'CORE/**/*.js'
             excludes:
-                - CORE/*.js
-                - CORE/log/*
+            - 'CORE/*.js'
+            - 'CORE/log/*'
     css/styles.css:
         visitors:
-            - less
+        - less
         files:
             includes:
-                - **/*.less
+            - '**/*.less'

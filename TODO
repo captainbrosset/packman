@@ -3,9 +3,8 @@
 - npm dependencies
 - implement the conditional visitor
 - implement a simple versioning visitor (based on a version tag given in cfg, put all destination files in a new /tag/ directory to avoid having to repeat this tag throughout the cfg)
-- implement the special AT visitors .... 
+- implement the special AT visitors ....
 - do a real doc (how to standard project)
-- for * escape of YAML-JSON, don't escape, replace by a token like [asterisk] or a random sequence, easier
 - instead of crappy md5, do the first few chars of the sha1, and give an example (in doc or visitor) that creates the piece of HTML that includes the files (create an include.html for instance that has the <link href=...sha1.css> and <script src=...sha1.js> or maybe just a piece of txt that has the map or something)
 - make it easy from visitors (expose API) to log (already done?)
 - make it easy from visitors (expose API) to open/close and write to files, given the destination root folder
@@ -13,5 +12,4 @@
 - make it easier (doc?) to pass configuration to visitors, even from extra custom command line args, so that for instance it's easy to run pakman twice with the conditional visitor: pakman -Dbrowser=IE7 and packman -Dbrowser=FF (see below)
 - Put in place custom visitors args from the command line: something like -Dkey1=value1 -Dkey2=value2 etc...
 - Do the same from the config itself, dedicated place in the config to store custom args, and the custom args from the command line will come in the same object too (even if conceptually, the whole config object is open)
-- if destination is provided but not packages are there, assume "pakman.js": {files: {includes: ["**/*"]}}
 - stats visitor, runs onEnd, outputs a txt file containing stats about the packaged files, how many pakaged files, their size (normal and gzipped), how many files are inside each package (sizes), ...

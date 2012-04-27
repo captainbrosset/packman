@@ -8,19 +8,19 @@ var parser = require("uglify-js").parser;
 var minifier = require("uglify-js").uglify;
 var fs = require("fs");
 
-/**
- * Minify the given JavaScript content
- * @param {String} content The content to minfy
- * @param {Boolean} mangle [Optional] Mangle variable names where possible, defaults to false
- * @return {String} The minified JavaScript content
- */
-function getMinifiedContent(content, mangle) {
-    var ast = parser.parse(content);
-    if(mangle) {
-        ast = minifier.ast_mangle(ast);
+function getMinifiedContent(content, path, mangle) {
+    try {
+        var ast = parser.parse(content);
+        if(mangle) {
+            ast = minifier.ast_mangle(ast);
+        }
+        ast = minifier.ast_squeeze(ast);
+        return minifier.gen_code(ast);
+    } catch(e) {
+        logger.logError("Could not minify file " + path);
+        logger.logDebug(e.message);
+        return content;
     }
-    ast = minifier.ast_squeeze(ast);
-    return minifier.gen_code(ast);
 }
 
 function getFileNameExtension(fileName) {
@@ -29,7 +29,7 @@ function getFileNameExtension(fileName) {
 
 module.exports.onFileContent = function(callback, config, fileObject) {
     if(getFileNameExtension(fileObject.path) === ".js") {
-        fileObject.content = getMinifiedContent(fileObject.content, true) + ";";
+        fileObject.content = getMinifiedContent(fileObject.content, fileObject.path, true) + ";";
     }
     callback();
 };

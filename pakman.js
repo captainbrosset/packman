@@ -3,14 +3,16 @@
  * Takes in a config (json) file to tell it which files to merge, and how
  */
 
+require("colors");
+
 console.log([
-"  _____       _                          ",
-" |  __ \\     | |                         ",
-" | |__) |__ _| | ___ __ ___   __ _ _ __  ",
-" |  ___// _` | |/ / '_ ` _ \\ / _` | '_ \\ ",
-" | |   | (_| |   <| | | | | | (_| | | | |",
-" |_|    \\__,_|_|\\_\\_| |_| |_|\\__,_|_| |_|",
-"                    pack it up like a man",
+"  _____       _                          ".yellow.bold,
+" |  __ \\     | |                         ".yellow.bold,
+" | |__) |__ _| | ___ __ ___   __ _ _ __  ".yellow.bold,
+" |  ___// _` | |/ / '_ ` _ \\ / _` | '_ \\ ".yellow.bold,
+" | |   | (_| |   <| | | | | | (_| | | | |".yellow.bold,
+" |_|    \\__,_|_|\\_\\_| |_| |_|\\__,_|_| |_|".yellow.bold,
+"                    pack it up like a man".yellow,
 ""
 ].join("\n"));
 
@@ -34,9 +36,7 @@ logger.level = argv.l;
 
 var config = require("./libs/config.js").get(argv.c)
 
-if(config !== null) {
-    config.argv = argv;
-
+if(config !== null && Object.keys(config.packages).length > 0) {
     var isEnvReady = require("./libs/env.js").prepare(config.destination, config.eraseIfExists);
 
     if(isEnvReady) {
@@ -47,14 +47,14 @@ if(config !== null) {
             resolvedPackages = require("./libs/resolver.js").resolveFilePaths(resolvedPackages, allSourceFiles);
             config.resolvedPackages = resolvedPackages;
 
-            logger.logInfo("Getting started with: source=" + config.source + ", destination=" + config.destination + ", eraseIfExists=" + config.eraseIfExists + "\n");
+            logger.logInfo("Getting started with: source=" + config.source + ", destination=" + config.destination + ", eraseIfExists=" + config.eraseIfExists);
 
             var merger = require("./libs/merger.js");
 
             merger.merge(config, function() {
                 console.log("");
                 var time = ((new Date().getTime()) - startTime)/1000;
-                console.log(" Pakman did it again! Have a great day! (" + time + " sec)");
+                console.log((" Pakman did it again! Have a great day! (" + time + " sec)").yellow.bold);
             });
         }
     } else {

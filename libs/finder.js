@@ -25,7 +25,6 @@ function getAllSourceFiles(directory) {
         });
     } catch(e) {
         logger.logError("Could not get the source files from " + directory);
-        logger.logDebug(e);
     }
     return sourceFiles;
 }

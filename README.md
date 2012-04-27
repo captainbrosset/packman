@@ -7,6 +7,7 @@ It is written in nodejs and requires:
 - wrench
 - fs-extra
 - js-yaml
+- colors
 - less (only when using the less visitor)
 - coffee-script (only when using the coffeescript visitor)
 
@@ -70,22 +71,22 @@ A visitor in pakman is simply a nodejs module that exports any of the following 
 
 	// At the very start, even before any files have been packaged
 	onStart: function(callback, config) {},
-	
+
 	// Before starting to package a set of files together
 	onPackageStart: function(callback, config, packageFileObject) {},
-	
+
 	// Before a file is being inserted into a package
 	onFileStart: function(callback, config, packageFileObject) {},
-	
+
 	// When inserting the content of a file into a package
 	onFileContent: function(callback, config, fileObject) {},
-	
+
 	// After a file has been inserted into a package
 	onFileEnd: function(callback, config, packageFileObject) {},
-	
+
 	// After having packaged a set of files together
 	onPackageEnd: function(callback, config, packageFileObject) {},
-	
+
 	// At the end, when all packages are done
 	onEnd: function(callback, config) {}
 
@@ -100,7 +101,7 @@ Most visitors' methods accept a `packageFileObject` as argument while the `onFil
 	    content: "the current content of the package file",
 	    currentFile: "reference to the File instance that is currently being packaged if any"
 	};
-	
+
 	File =  {
 	    path: "the logical path of the file",
 	    physicalPath: "the physical path of the file",

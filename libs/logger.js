@@ -1,18 +1,23 @@
+
 function padTime(time) {
     time = time + "";
     return time.length == 1 ? "0" + time : time;
 }
 
+var levelSize = 3;
+
 function formatMessage(message, level) {
     if(message === "") {
         return "";
     } else {
-        /*var timestamp = new Date();
-        var hours = padTime(timestamp.getHours());
-        var minutes = padTime(timestamp.getMinutes());
-        var seconds = padTime(timestamp.getSeconds());*/
+        if(level === "log")   message = message.bold.grey;
+        if(level === "info")   message = message.bold.cyan;
+        if(level === "warn")   message = message.bold.yellow;
+        if(level === "error")   message = message.bold.red;
 
-        return /*"[" + hours + ":" + minutes + ":" + seconds + "] */" [" + level.toUpperCase().substring(0,4) + "] " + message;
+        message = " [" + level.toUpperCase().substring(0, levelSize) + "] " + message;
+
+        return message;
     }
 }
 

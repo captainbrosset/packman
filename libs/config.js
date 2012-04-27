@@ -24,22 +24,27 @@ function normalize(config, ref) {
 };
 
 function transformYamlToJs(yamlText) {
-    // * are a special char in YAML, so auto-escape them
-    yamlText = yamlText.replace(/\*/g, "\\*");
     try {
-        // Then revert them back to * in the JSON
-        var jsText = JSON.stringify(yaml.load(yamlText));
-        return JSON.parse(jsText.replace(/\\/g, ""));
+        return yaml.load(yamlText);
     } catch(e) {
-        logger.logError("Could not parse the YAML configuration file", e);
+        var msg = "Could not parse the YAML configuration file (";
+        msg += e.context + " line " + e.contextMark.line + " column " + e.contextMark.column;
+        msg += " : " + e.problem + ")";
+        logger.logError(msg);
         return {};
     }
-}
+};
 
 function get(configPath) {
     try {
         var data = fs.readFileSync(configPath, "utf8");
-        return normalize(transformYamlToJs(data));
+        var config = normalize(transformYamlToJs(data));
+
+        if(Object.keys(config.packages).length === 0) {
+            config.packages = {"pakman.js": {files: {includes: ["**/*"]}}};
+        }
+
+        return config;
     } catch (e) {
         logger.logError("Could not find configuration file " + configPath);
         logger.logDebug(e);
