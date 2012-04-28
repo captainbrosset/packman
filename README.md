@@ -1,13 +1,18 @@
 packman is a command line tool that can package text files together.
 
-packman was born of the need to group several JavaScript files together in one big, minified, versioned JavaScript file to improve websites' performance, therefore this is its most common use case. However, packman works with any type of text files and can package any number of files in any number of crazy ways you want.
+Even if packman was born of the need to group several JavaScript files together in one big, minified, versioned JavaScript file to improve websites' performance, it works with any type of text files and can package any number of files in any number of crazy ways you want.
 
-Basic usage
-===========
+Installation
+============
 
-	Install: npm install -g packman
+packman can be installed via npm, so first, get [nodejs](http://nodejs.org) installed. Then type:
 
-	Usage: packman -c path/to/myconfig.json -l 4
+	npm install -g packman
+
+Usage
+=====
+
+	packman -c path/to/myconfig.yaml -l 4
 
 	Options:
 	  -c, --config   Path to the config file to use                                                     [required]
