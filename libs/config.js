@@ -47,7 +47,6 @@ function get(configPath) {
         return config;
     } catch (e) {
         logger.logError("Could not find configuration file " + configPath);
-        logger.logDebug(e);
         return null;
     }
 };

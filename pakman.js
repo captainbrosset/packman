@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 /**
  * pakman - the file packager
  * Takes in a config (json) file to tell it which files to merge, and how

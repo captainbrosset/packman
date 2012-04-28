@@ -10,25 +10,14 @@
 
 pakman is a command line tool that can package text files.
 
-It is written in nodejs and requires:
-
-- optimist
-- uglify-js
-- wrench
-- fs-extra
-- js-yaml
-- colors
-- less (only when using the less visitor)
-- coffee-script (only when using the coffeescript visitor)
-
-(these modules are under source control in node_modules, but I'm working on npm-ing everything).
-
 pakman was born of the need to group several JavaScript files together in one big, minified, versioned JavaScript file to improve websites' performance, therefore this is its most common use case. However, pakman works with any type of text files and can package any number of files in any number of crazy ways you want.
 
 Basic usage
 ===========
 
-	Usage: node pakman -c path/to/myconfig.json -l 4
+	Install: npm install pakman
+
+	Usage: pakman -c path/to/myconfig.json -l 4
 
 	Options:
 	  -c, --config   Path to the config file to use                                                     [required]

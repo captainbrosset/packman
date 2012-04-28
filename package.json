@@ -8,6 +8,9 @@
     "type": "git",
     "url": "git://github.com/captainbrosset/pakman.git"
   },
+  "bin": {
+    "pakman": "./pakman.js"
+  },
   "main": "pakman.js",
   "engines": {
     "node": "~0.6.7"
@@ -16,7 +19,9 @@
     "colors" : "",
     "optimist" : "",
     "js-yaml" : "",
-    "wrench" : ""
+    "wrench" : "",
+    "uglify-js" : "",
+    "fs-extra" : ""
   },
   "devDependencies": {}
 }
