@@ -2,3 +2,4 @@ src
 target
 build
 .bin
+node_modules
