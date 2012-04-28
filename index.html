@@ -85,9 +85,21 @@ packages:
 
 <p>Examples of visitors include (but are not restricted to) including separators between the files, minifying file content, renaming package files to include a version number, processing less css or coffeescript files.</p>
 
-<p>A bunch of existing visitors can already be used from the visitors folder.</p>
+<p>packman comes with a bunch of built-in visitors:</p>
+<ul>
+  <li><strong>sep</strong>: to separate content of different files inside a package (simply adding comment headers)</li>
+  <li><strong>coffeescript</strong>: compile to JS any *.coffee file</li>
+  <li><strong>less</strong>: compile to CSS any *.less file</li>
+  <li><strong>uglify</strong>: minify and mangle JS content to make it smaller</li>
+</ul>
+
+<h2>Using visitors</h2>
 
 <p>Visitors can be specified either globally at the top level of the config file, or locally, within each package definition. Visitors are configure through an array, and are, therefore, run in a sequence, one after the other.</p>
+
+<p>Visitors specified simply by name (e.g. "less") is assumed to be a built-in visitor. If you want to use a visitor that is not provided by packman by default, specify the full (relative or absolute) path to the js file.</p>
+
+<h2>Developing visitors</h2>
 
 <p>A visitor in packman is simply a nodejs module that exports any of the following functions:</p>
 
