@@ -1,23 +1,13 @@
-<pre>
-  _____       _
- |  __ \     | |
- | |__) |__ _| | ___ __ ___   __ _ _ __
- |  ___// _` | |/ / '_ ` _ \ / _` | '_ \
- | |   | (_| |   &lt;| | | | | | (_| | | | |
- |_|    \__,_|_|\_\_| |_| |_|\__,_|_| |_|
-                    pack it up like a man
-</pre>
+packman is a command line tool that can package text files together.
 
-pakman is a command line tool that can package text files.
-
-pakman was born of the need to group several JavaScript files together in one big, minified, versioned JavaScript file to improve websites' performance, therefore this is its most common use case. However, pakman works with any type of text files and can package any number of files in any number of crazy ways you want.
+packman was born of the need to group several JavaScript files together in one big, minified, versioned JavaScript file to improve websites' performance, therefore this is its most common use case. However, packman works with any type of text files and can package any number of files in any number of crazy ways you want.
 
 Basic usage
 ===========
 
-	Install: npm install pakman
+	Install: npm install packman
 
-	Usage: pakman -c path/to/myconfig.json -l 4
+	Usage: packman -c path/to/myconfig.json -l 4
 
 	Options:
 	  -c, --config   Path to the config file to use                                                     [required]
@@ -68,7 +58,7 @@ A bunch of existing visitors can already be used from the visitors folder.
 
 Visitors can be specified either globally at the top level of the config file, or locally, within each package definition. Visitors are configure through an array, and are, therefore, run in a sequence, one after the other.
 
-A visitor in pakman is simply a nodejs module that exports any of the following functions:
+A visitor in packman is simply a nodejs module that exports any of the following functions:
 
 	// At the very start, even before any files have been packaged
 	onStart: function(callback, config) {},
@@ -91,7 +81,7 @@ A visitor in pakman is simply a nodejs module that exports any of the following 
 	// At the end, when all packages are done
 	onEnd: function(callback, config) {}
 
-Visitors' methods can be asynchronous if needed, this is why they accept a callback as their first parameter. Once their processing is done, they must call the callback to allow pakman to continue looping on other visitors, and ultimately on other files and packages.
+Visitors' methods can be asynchronous if needed, this is why they accept a callback as their first parameter. Once their processing is done, they must call the callback to allow packman to continue looping on other visitors, and ultimately on other files and packages.
 
 Note that since the config is passed as argument to the above methods, you can add extra data to it to be used by visitors.
 

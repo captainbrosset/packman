@@ -40,7 +40,7 @@ function normalizeVisitor(visitor) {
     return overrideObject(emptyVisitor, visitor);
 }
 
-// Is this a visitor from the default pakman install
+// Is this a visitor from the default packman install
 function isDefaultVisitor(path) {
     return path.indexOf(".") === -1;
 }
@@ -63,7 +63,7 @@ function getVisitorInstance(visitorPath) {
 
         visitorInstance = require(visitorPath);
     } catch(e) {
-        logger.logError("Custom visitor " + visitorPath + " could not be loaded, pakman will run anyway, just skipping this visitor", e);
+        logger.logError("Custom visitor " + visitorPath + " could not be loaded, packman will run anyway, just skipping this visitor", e);
     }
     return visitorInstance;
 }

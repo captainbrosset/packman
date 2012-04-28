@@ -1,17 +1,17 @@
 {
   "author": "Patrick Brosset <patrickbrosset@gmail.com> (http://github.com/captainbrosset)",
-  "name": "pakman",
+  "name": "packman",
   "description": "text file packager tool",
   "version": "0.1.0",
-  "homepage": "http://github.com/captainbrosset/pakman",
+  "homepage": "http://github.com/captainbrosset/packman",
   "repository": {
     "type": "git",
-    "url": "git://github.com/captainbrosset/pakman.git"
+    "url": "git://github.com/captainbrosset/packman.git"
   },
   "bin": {
-    "pakman": "./pakman.js"
+    "packman": "./packman.js"
   },
-  "main": "pakman.js",
+  "main": "packman.js",
   "engines": {
     "node": "~0.6.7"
   },

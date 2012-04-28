@@ -41,7 +41,7 @@ function get(configPath) {
         var config = normalize(transformYamlToJs(data));
 
         if(Object.keys(config.packages).length === 0) {
-            config.packages = {"pakman.js": {files: {includes: ["**/*"]}}};
+            config.packages = {"packman.js": {files: {includes: ["**/*"]}}};
         }
 
         return config;

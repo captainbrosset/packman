@@ -1,20 +1,21 @@
 #!/usr/bin/env node
 
 /**
- * pakman - the file packager
+ * packman - the file packager
  * Takes in a config (json) file to tell it which files to merge, and how
  */
 
 require("colors");
 
 console.log([
-"  _____       _                          ".yellow.bold,
-" |  __ \\     | |                         ".yellow.bold,
-" | |__) |__ _| | ___ __ ___   __ _ _ __  ".yellow.bold,
-" |  ___// _` | |/ / '_ ` _ \\ / _` | '_ \\ ".yellow.bold,
-" | |   | (_| |   <| | | | | | (_| | | | |".yellow.bold,
-" |_|    \\__,_|_|\\_\\_| |_| |_|\\__,_|_| |_|".yellow.bold,
-"                    pack it up like a man".yellow,
+"                   _                          ".yellow.bold,
+"                  | |                         ".yellow.bold,
+"  _ __   __ _  ___| | ___ __ ___   __ _ _ __  ".yellow.bold,
+" | '_ \\ / _` |/ __| |/ / '_ ` _ \\ / _` | '_ \\ ".yellow.bold,
+" | |_) | (_| | (__|   <| | | | | | (_| | | | |".yellow.bold,
+" | .__/ \\__,_|\\___|_|\\_\\_| |_| |_|\\__,_|_| |_|".yellow.bold,
+" | |                     ".yellow.bold + "pack it up like a man ".yellow,
+" |_|                                          ".yellow.bold,
 ""
 ].join("\n"));
 
@@ -56,11 +57,11 @@ if(config !== null && Object.keys(config.packages).length > 0) {
             merger.merge(config, function() {
                 console.log("");
                 var time = ((new Date().getTime()) - startTime)/1000;
-                console.log((" Pakman did it again! Have a great day! (" + time + " sec)").yellow.bold);
+                console.log((" packman did it again! Have a great day! (" + time + " sec)").yellow.bold);
             });
         }
     } else {
-        logger.logWarning("Pakman could not prepare the destination directory, there's an existing file at " + config.destination);
+        logger.logWarning("packman could not prepare the destination directory, there's an existing file at " + config.destination);
         logger.logWarning("Make sure you configure the proper destination directory path or set the 'eraseIfExists' config flag to true.");
     }
 }
