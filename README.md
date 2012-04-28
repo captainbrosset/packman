@@ -5,7 +5,7 @@ packman was born of the need to group several JavaScript files together in one b
 Basic usage
 ===========
 
-	Install: npm install packman
+	Install: npm install -g packman
 
 	Usage: packman -c path/to/myconfig.json -l 4
 
