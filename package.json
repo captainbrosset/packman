@@ -16,12 +16,14 @@
     "node": "~0.6.7"
   },
   "dependencies": {
-    "colors" : "",
-    "optimist" : "",
-    "js-yaml" : "",
-    "wrench" : "",
-    "uglify-js" : "",
-    "fs-extra" : ""
+    "colors": "",
+    "optimist": "",
+    "js-yaml": "",
+    "wrench": "",
+    "uglify-js": "",
+    "fs-extra": "",
+    "coffee-script": "",
+    "less": ""
   },
   "devDependencies": {}
 }
