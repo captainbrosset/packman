@@ -5,7 +5,7 @@ var defaultConfig = {
     source: "./",
     destination: "./",
     eraseIfExists: false,
-    visitors: ["./visitors/sep.js"],
+    visitors: ["sep"],
     packages: {},
     resolvedPackages: {}
 };
@@ -28,23 +28,33 @@ function transformYamlToJs(yamlText) {
         return yaml.load(yamlText);
     } catch(e) {
         var msg = "Could not parse the YAML configuration file (";
-        msg += e.context + " line " + e.contextMark.line + " column " + e.contextMark.column;
+        if(e.context && e.contextMark) {
+            msg += e.context + " line " + e.contextMark.line + " column " + e.contextMark.column;
+        }
+        if(e.problemMark) {
+            msg += "line " + e.problemMark.line + " column " + e.problemMark.column;
+        }
         msg += " : " + e.problem + ")";
         logger.logError(msg);
-        return {};
+        return null;
     }
 };
 
 function get(configPath) {
     try {
         var data = fs.readFileSync(configPath, "utf8");
-        var config = normalize(transformYamlToJs(data));
+        var jsConfig = transformYamlToJs(data);
+        if(jsConfig) {
+            var config = normalize(jsConfig);
 
-        if(Object.keys(config.packages).length === 0) {
-            config.packages = {"packman.js": {files: {includes: ["**/*"]}}};
+            if(Object.keys(config.packages).length === 0) {
+                config.packages = {"packman.js": {files: {includes: ["**/*"]}}};
+            }
+
+            return config;
+        } else {
+            return null;
         }
-
-        return config;
     } catch (e) {
         logger.logError("Could not find configuration file " + configPath);
         return null;

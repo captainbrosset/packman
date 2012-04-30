@@ -4,18 +4,30 @@ function padTime(time) {
     return time.length == 1 ? "0" + time : time;
 }
 
-var levelSize = 3;
-
 function formatMessage(message, level) {
     if(message === "") {
         return "";
     } else {
-        if(level === "log")   message = message.bold.grey;
-        if(level === "info")   message = message.bold.cyan;
-        if(level === "warn")   message = message.bold.yellow;
-        if(level === "error")   message = message.bold.red;
+        var prefix = "";
 
-        message = " [" + level.toUpperCase().substring(0, levelSize) + "] " + message;
+        if(level === "log") {
+            prefix = "   log ";
+            message = message.bold.grey;
+        }
+        if(level === "info") {
+            prefix = "  info ";
+            message = message.bold.cyan;
+        }
+        if(level === "warn") {
+            prefix = "  warn ";
+            message = message.bold.yellow;
+        }
+        if(level === "error") {
+            prefix = " error ";
+            message = message.bold.red;
+        }
+
+        message = prefix + message;
 
         return message;
     }

@@ -51,20 +51,25 @@ function isAbsolutePath(path) {
 
 function getVisitorInstance(visitorPath) {
     var visitorInstance = {};
-    try {
-        if(isDefaultVisitor(visitorPath)) {
-            // If this is a default visitor (myVisitor)
-            visitorPath = "../visitors/" + visitorPath + ".js";
 
-        } else if(!isAbsolutePath(visitorPath)) {
-            // If the path does not start with / (myVisitor.js or path/to/visitor.js or ./path/to/myvisitor.js)
-            visitorPath = process.cwd() + "/" + visitorPath;
+    if(isDefaultVisitor(visitorPath)) {
+        // If this is a default visitor (myVisitor)
+        var realVisitorPath = "../visitors/" + visitorPath + ".js";
+        try {
+            visitorInstance = require(realVisitorPath);
+        } catch(e) {
+            logger.logError("Built-in visitor '" + visitorPath + "' could not be loaded, packman will run anyway, just skipping this visitor", e);
         }
-
-        visitorInstance = require(visitorPath);
-    } catch(e) {
-        logger.logError("Custom visitor " + visitorPath + " could not be loaded, packman will run anyway, just skipping this visitor", e);
+    } else if(!isAbsolutePath(visitorPath)) {
+        // If the path does not start with / (myVisitor.js or path/to/visitor.js or ./path/to/myvisitor.js)
+        var realVisitorPath = process.cwd() + "/" + visitorPath;
+        try {
+            visitorInstance = require(realVisitorPath);
+        } catch(e) {
+            logger.logError("Custom visitor '" + visitorPath + "' could not be loaded, packman will run anyway, just skipping this visitor", e);
+        }
     }
+
     return visitorInstance;
 }
 
