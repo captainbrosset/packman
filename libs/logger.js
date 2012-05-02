@@ -44,7 +44,7 @@ function log(message, level, e) {
 }
 
 global.logger = {};
-global.logger.level = 1;
+global.logger.level = 3;
 global.logger.logDebug = function(message) {
     if(global.logger.level >= 4) log(message, "log");
 };

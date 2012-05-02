@@ -1,7 +1,6 @@
 var wrench = require("wrench");
 var fs = require("fs");
 
-
 function getParentDirectoryPath(file) {
     return file.substring(0, file.lastIndexOf("/"));
 }
