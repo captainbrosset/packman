@@ -1,4 +1,3 @@
-- add a --watch option to run in the background and package when a file is saved (fs.watch doesn's work that great ...)
 - implement the conditional visitor
 - implement a simple versioning visitor (based on a version tag given in cfg, put all destination files in a new /tag/ directory to avoid having to repeat this tag throughout the cfg)
 - implement the special AT visitors ....
@@ -10,6 +9,4 @@
 - Do the same from the config itself, dedicated place in the config to store custom args, and the custom args from the command line will come in the same object too (even if conceptually, the whole config object is open)
 - stats visitor, runs onEnd, outputs a txt file containing stats about the packaged files, how many pakaged files, their size (normal and gzipped), how many files are inside each package (sizes), ...
 - add a normal logger.log method that is not subject to the current level and does not output a [level] at the beginning. this can be useful for visitors especially
-- change the [LEVEL] to level
-- visitor to run unit tests on all files in the package definition and just outputs the test reports in the content of the packaged file
-- unit test + CI with travis
+- unit test + CI with travis (npm test)
