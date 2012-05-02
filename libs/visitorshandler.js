@@ -70,6 +70,8 @@ function getVisitorInstance(visitorPath) {
         }
     }
 
+    visitorInstance.name = visitorPath;
+
     return visitorInstance;
 }
 
@@ -98,9 +100,14 @@ function runVisitorsOnPhase(phase, visitors, args, callback) {
         callback();
     } else {
         var visitor = visitors.splice(0, 1)[0];
-        visitor[phases[phase]].apply(null, [function() {
+        try {
+            visitor[phases[phase]].apply(null, [function() {
+                runVisitorsOnPhase(phase, visitors, args, callback);
+            }].concat(args));
+        } catch(e) {
+            logger.logError("Visitor " + visitor.name + " crashed with error: " + e);
             runVisitorsOnPhase(phase, visitors, args, callback);
-        }].concat(args));
+        }
     }
 }
 
