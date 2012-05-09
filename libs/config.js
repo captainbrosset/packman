@@ -2,8 +2,8 @@ var fs = require("fs");
 var yaml = require('js-yaml');
 
 var defaultConfig = {
-    source: "./",
-    destination: "./",
+    source: "./src",
+    destination: "./target",
     eraseIfExists: false,
     visitors: ["sep"],
     packages: {},
