@@ -3,12 +3,9 @@
 - implement the special AT visitors ....
 - instead of crappy md5, do the first few chars of the sha1, and give an example (in doc or visitor) that creates the piece of HTML that includes the files (create an include.html for instance that has the <link href=...sha1.css> and <script src=...sha1.js> or maybe just a piece of txt that has the map or something)
 - make it easy from visitors (expose API) to open/close and write to files, given the destination root folder
-- simplify logger levels to only have 2: default is warn and errors only, and verbose is everything?
 - make it easier (doc?) to pass configuration to visitors, even from extra custom command line args, so that for instance it's easy to run packman twice with the conditional visitor: packman -Dbrowser=IE7 and packman -Dbrowser=FF (see below)
 - Put in place custom visitors args from the command line: something like -Dkey1=value1 -Dkey2=value2 etc...
 - Do the same from the config itself, dedicated place in the config to store custom args, and the custom args from the command line will come in the same object too (even if conceptually, the whole config object is open)
 - stats visitor, runs onEnd, outputs a txt file containing stats about the packaged files, how many pakaged files, their size (normal and gzipped), how many files are inside each package (sizes), ...
-- add a normal logger.log method that is not subject to the current level and does not output a [level] at the beginning. this can be useful for visitors especially
-- unit test + CI with travis (npm test)
 - dependency injection for easier testing (export a function that takes dependencies as argument and test whether arguments are there, otherwise simply require the normal stuff)
-- split further the files in lib (string utils, yaml, ...)
+- split further the files in lib (string utils, yaml, ...) for easier testing

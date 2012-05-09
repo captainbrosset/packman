@@ -1,16 +1,9 @@
-var StringUtils = {
-	startsWith: function(string, start) {
-		return string.substring(0, start.length) === start;
-	},
-	endsWith: function(string, end) {
-		return string.substring(string.length - end.length) === end;
-	}
-};
+var stringutils = require("./stringutils.js");
 
 var pathSeparator = "/";
 
 function match(pattern, str) {
-	if (StringUtils.startsWith(str, pathSeparator) != StringUtils.startsWith(pattern, pathSeparator)) {
+	if (stringutils.startsWith(str, pathSeparator) != stringutils.startsWith(pattern, pathSeparator)) {
 		return false;
 	}
 
@@ -38,7 +31,7 @@ function match(pattern, str) {
 	if (strIdxStart > strIdxEnd) {
 		// String is exhausted, only match if rest of pattern is * or **'s
 		if (patIdxStart == patIdxEnd && patDirs[patIdxStart] === "*" &&
-				StringUtils.endsWith(str, pathSeparator)) {
+				stringutils.endsWith(str, pathSeparator)) {
 			return true;
 		}
 		for (var i = patIdxStart; i <= patIdxEnd; i++) {
@@ -260,15 +253,4 @@ function matchStrings(pattern, str) {
 	return true;
 }
 
-if (!module.parent) {
-	// TODO: need some unit testing framework
-	console.log(match("**/*.js", "aria/test/text.js") || "TEST FAILED");
-	console.log(!match("**/*.jss", "aria/test/text.js") || "TEST FAILED");
-	console.log(match("aria/core/**/*.js", "aria/core/text.js") || "TEST FAILED");
-	console.log(match("aria/core/**/*.js", "aria/core/transport/IO.js") || "TEST FAILED");
-	console.log(match("aria/core/**/*.js", "aria/core/transport/intf/IO.js") || "TEST FAILED");
-	console.log(!match("aria/core/*.js", "aria/core/transport/intf/IO.js") || "TEST FAILED");
-	console.log(match("aria/core/*.js", "aria/core/IO.js") || "TEST FAILED");
-} else {
-	module.exports.match = match;
-}
+module.exports.match = match;
