@@ -7,7 +7,6 @@
  */
 
 var crypto = require("crypto");
-var fs = require("fs-extra");
 var util = require("util");
 
 

@@ -21,14 +21,13 @@
     "js-yaml": "",
     "wrench": "",
     "uglify-js": "",
-    "fs-extra": "",
     "coffee-script": "",
     "less": ""
   },
   "devDependencies": {
-    "mocha": {}
+    
   },
   "scripts": {
-    "test": "mocha"
+    "test": "./node_modules/.bin/mocha"
   }
 }
