@@ -22,7 +22,8 @@
     "wrench": "",
     "uglify-js": "",
     "coffee-script": "",
-    "less": ""
+    "less": "",
+    "mocha": ""
   },
   "devDependencies": {
     
