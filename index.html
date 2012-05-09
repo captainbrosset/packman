@@ -19,6 +19,7 @@
         <p>text file packaging command line utility</p>
         <p class="view"><a href="https://github.com/captainbrosset/packman">View the Project on GitHub <small>captainbrosset/packman</small></a></p>
         <ul>
+          <li><a href="http://search.npmjs.org/#/packman">Get from <strong>npm</strong></a></li>
           <li><a href="https://github.com/captainbrosset/packman/zipball/master">Download <strong>ZIP File</strong></a></li>
           <li><a href="https://github.com/captainbrosset/packman/tarball/master">Download <strong>TAR Ball</strong></a></li>
           <li><a href="https://github.com/captainbrosset/packman">Fork On <strong>GitHub</strong></a></li>
@@ -37,17 +38,24 @@
 
 <h1>Usage</h1>
 
-<pre><code>packman -c path/to/myconfig.json -l 4
+<pre><code>packman
 
 Options:
-  -c, --config   Path to the config file to use                                                     [required]
-  -l, --logging  Logging level (only errors = 1, also warnings = 2, also info = 3, also debug = 4)  [default: 1]
+  -c, --config   Path to the config file to use (defaults to .packman in the current working dir)   [default: "./.packman"]
+  -l, --logging  Logging level (only errors = 1, also warnings = 2, also info = 3, also debug = 4)  [default: 3]
+  -h, --help     Displays this message                                                              [boolean]
+  -w, --watch    Watch for file changes and run packman again if any                                [boolean]
 </code></pre>
+
+<p>As you can see, no option is mandatory. By default, packman will look for a file named <code>.packman</code> in the current directory.</p>
+
+<p>Using the <code>watch</code> mode helps with productivity. It basically lets packman run and watch for file changes in the configured source directory so instead of having to manually run packman every time you make a change, your packages will be created after each and every file changed, automatically.</p>
 
 <p>Config files are written in yaml and look like this</p>
 
 <pre><code>source: my/source/dir
 destination: my/target/dir
+eraseIfExists: true
 visitors:
     - coffeescript
     - jsmin
@@ -71,11 +79,11 @@ packages:
                 - **/*.less
 </code></pre>
 
-<p>The first level of the config contains general configuration like the source and destination folders to work on.</p>
+<p>The first level of the config contains general configuration like the <code>source</code> and <code>destination</code> folders, a flag telling packman whether the destination should be erased if it already exists or not, the global <code>visitors</code> to use and the list of <code>packages</code> to create.</p>
 
 <p>Then, inside the <code>packages</code> node, is the list of all packages to be created.</p>
 
-<p>Files to be included inside a package are given in the <code>files</code> sub-node and can be either an array of file names, or an object with either <code>includes</code> or <code>excludes</code> or both. These sub-properties are arrays of file names or ant pattern (?, <em>, *</em>). If an array of files is provided, the files will be merged in this order.</p>
+<p>Files to be included inside a package are given in the <code>files</code> sub-node and can be either an array of file names, or an object with either <code>includes</code> or <code>excludes</code> or both. These sub-properties are arrays of file names or ant pattern (?, *, **). If an array of files is provided, the files will be merged in this order.</p>
 
 <h1>Visitors</h1>
 
