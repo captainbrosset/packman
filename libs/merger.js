@@ -7,7 +7,7 @@
 
 var fs = require("fs");
 var vh = require("./visitorshandler.js");
-var fu = require("./fileutils.js");
+var fu = require("./fileutils.js")();
 var sequence = require("./sequencer.js").sequence;
 
 

@@ -20,7 +20,7 @@ console.log([
 ].join("\n"));
 
 var fs = require("fs");
-var fu = require("./libs/fileutils.js");
+var fu = require("./libs/fileutils.js")();
 var configReader = require("./libs/config.js");
 require("./libs/logger.js");
 
