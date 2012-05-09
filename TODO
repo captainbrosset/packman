@@ -10,3 +10,6 @@
 - stats visitor, runs onEnd, outputs a txt file containing stats about the packaged files, how many pakaged files, their size (normal and gzipped), how many files are inside each package (sizes), ...
 - add a normal logger.log method that is not subject to the current level and does not output a [level] at the beginning. this can be useful for visitors especially
 - unit test + CI with travis (npm test)
+- dependency injection for easier testing (export a function that takes dependencies as argument and test whether arguments are there, otherwise simply require the normal stuff)
+- split further the files in lib (string utils, yaml, ...)
+- change the default config: src should by default be ./src and destination should by default be ./target or similar
