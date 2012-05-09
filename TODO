@@ -12,4 +12,3 @@
 - unit test + CI with travis (npm test)
 - dependency injection for easier testing (export a function that takes dependencies as argument and test whether arguments are there, otherwise simply require the normal stuff)
 - split further the files in lib (string utils, yaml, ...)
-- change the default config: src should by default be ./src and destination should by default be ./target or similar

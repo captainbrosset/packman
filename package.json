@@ -25,5 +25,10 @@
     "coffee-script": "",
     "less": ""
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "mocha": {}
+  },
+  "scripts": {
+    "test": "mocha"
+  }
 }
