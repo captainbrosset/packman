@@ -1,5 +1,5 @@
 var fs = require("fs");
-var yaml = require('js-yaml');
+var yaml2js = require("./yaml2js.js")();
 
 var defaultConfig = {
     source: "./src",
@@ -23,40 +23,25 @@ function normalize(config, ref) {
     return normalizedConfig;
 };
 
-function transformYamlToJs(yamlText) {
-    try {
-        return yaml.load(yamlText);
-    } catch(e) {
-        var msg = "Could not parse the YAML configuration file (";
-        if(e.context && e.contextMark) {
-            msg += e.context + " line " + e.contextMark.line + " column " + e.contextMark.column;
-        }
-        if(e.problemMark) {
-            msg += "line " + e.problemMark.line + " column " + e.problemMark.column;
-        }
-        msg += " : " + e.problem + ")";
-        logger.logError(msg);
-        return null;
-    }
-};
-
 function get(configPath) {
+    // FIXME: change this part to allow no configuration files at all, and just normalize the the default config object
     try {
         var data = fs.readFileSync(configPath, "utf8");
-        var jsConfig = transformYamlToJs(data);
-        if(jsConfig) {
-            var config = normalize(jsConfig);
-
-            if(Object.keys(config.packages).length === 0) {
-                config.packages = {"packman.js": {files: {includes: ["**/*"]}}};
-            }
-
-            return config;
-        } else {
-            return null;
-        }
-    } catch (e) {
+    } catch(e) {
         logger.logError("Could not find configuration file " + configPath);
+        return null;
+    }
+
+    var jsConfig = yaml2js.toJs(data);
+    if(jsConfig) {
+        var config = normalize(jsConfig);
+
+        if(Object.keys(config.packages).length === 0) {
+            config.packages = {"packman.js": {files: {includes: ["**/*"]}}};
+        }
+
+        return config;
+    } else {
         return null;
     }
 };
