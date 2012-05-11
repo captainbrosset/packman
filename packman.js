@@ -85,7 +85,10 @@ if(argv.h) {
                     merger.merge(config, function() {
                         console.log("");
                         var time = ((new Date().getTime()) - startTime) / 1000;
-                        console.log((" packman did it again! Have a great day! (" + time + " sec)").yellow.bold);
+                        if(!argv.w) {
+                            console.log((" packman did it again! Have a great day! (" + time + " sec)").yellow.bold);
+                        }
+                        console.log("");
                         if(callback)    callback();
                     });
                 }
@@ -101,7 +104,11 @@ if(argv.h) {
     }
 
     if(argv.w) {
+        progress = require("./libs/progress.js");
+        progress.start();
+
         function watch() {
+
             var interval = setInterval(function() {
                 for(var i = 0, l = allFileStats.length; i < l; i ++) {
                     try {
@@ -109,9 +116,12 @@ if(argv.h) {
 
                         if(allFileStats[i].mtime.getTime() !== newMTime.getTime()) {
                             clearInterval(interval);
-                            console.log("");
+                            process.stdout.write("\r");
+
                             logger.logInfo("File " + allFileStats[i].file + " changed, packman will run again");
+                            console.log("");
                             allFileStats[i].mtime = newMTime;
+                            
                             packman(function() {
                                 watch();
                             });
