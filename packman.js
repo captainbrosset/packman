@@ -105,11 +105,14 @@ if(argv.h) {
 
     if(argv.w) {
         progress = require("./libs/progress.js");
-        progress.start();
+        progress.play();
 
         function watch() {
+            var startedAt = new Date().getTime();
 
             var interval = setInterval(function() {
+                progress.updateWaitingMessage((new Date().getTime() - startedAt) / 1000);
+
                 for(var i = 0, l = allFileStats.length; i < l; i ++) {
                     try {
                         var newMTime = getFileMTime(allFileStats[i].file);
