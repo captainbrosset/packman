@@ -2,7 +2,7 @@
   "author": "Patrick Brosset <patrickbrosset@gmail.com> (http://github.com/captainbrosset)",
   "name": "packman",
   "description": "text file packager tool",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "homepage": "http://github.com/captainbrosset/packman",
   "repository": {
     "type": "git",
@@ -26,7 +26,7 @@
     "mocha": ""
   },
   "devDependencies": {
-    
+
   },
   "scripts": {
     "test": "./node_modules/.bin/mocha"
