@@ -19,10 +19,10 @@ console.log([
 ""
 ].join("\n"));
 
+require("./libs/logger.js");
 var fs = require("fs");
 var fu = require("./libs/fileutils.js")();
 var configReader = require("./libs/config.js");
-require("./libs/logger.js");
 
 var argv = require('optimist')
     .usage('Usage:\n  packman')
@@ -124,7 +124,7 @@ if(argv.h) {
                             logger.logInfo("File " + allFileStats[i].file + " changed, packman will run again");
                             console.log("");
                             allFileStats[i].mtime = newMTime;
-                            
+
                             packman(function() {
                                 watch();
                             });

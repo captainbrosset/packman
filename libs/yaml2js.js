@@ -1,6 +1,6 @@
 module.exports = function(yaml, mockLogger) {
     yaml = yaml || require('js-yaml');
-    logger = (typeof logger === "undefined") ? mockLogger : logger;
+    var myLogger = mockLogger || logger;
 
     function toJs(yamlText) {
         try {
@@ -14,7 +14,7 @@ module.exports = function(yaml, mockLogger) {
                 msg += "line " + e.problemMark.line + " column " + e.problemMark.column + " : ";
             }
             msg += e.problem + ")";
-            logger.logError(msg);
+            myLogger.logError(msg);
             return null;
         }
     };
