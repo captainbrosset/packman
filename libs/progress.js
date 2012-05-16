@@ -44,19 +44,21 @@ function hideCursor() {process.stdout.write('\033[?25l');};
 function showCursor() {process.stdout.write('\033[?25h');};
 
 function play() {
-    if(!interval) {
-        // FIXME: crashes on Windows ??? no idea why for now
-        //hideCursor();
-        /*process.on('SIGINT', function(){
-            showCursor();
-            console.log('\n');
-            process.exit();
-        });*/
+    if(!process.platform.match(/^win/)) {
+        if(!interval) {
+            // FIXME: crashes on Windows ??? no idea why for now
+            //hideCursor();
+            /*process.on('SIGINT', function(){
+                showCursor();
+                console.log('\n');
+                process.exit();
+            });*/
 
-        console.log();
-        interval = setInterval(function() {
-            process.stdout.write("\r " + frames[cursor++ % frames.length].yellow + " " + messages[messageIndex]);
-        }, freq);
+            console.log();
+            interval = setInterval(function() {
+                process.stdout.write("\r " + frames[cursor++ % frames.length].yellow + " " + messages[messageIndex]);
+            }, freq);
+        }
     }
 };
 
