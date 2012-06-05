@@ -1,0 +1,13 @@
+My todo list
+================================================================================
+[ ] implement the conditional visitor  
+[ ] implement the special AT visitors ....  
+[ ] instead of crappy md5, do the first few chars of the sha1, and give an example doc or visitor) that creates the piece of HTML that includes the files an include.html for instance that has the <link href=...sha1.css> and <script src=...sha1.js> or maybe just a piece of txt that has the map or something)  
+[ ] make it easy from visitors API) to open/close and write to files, given the destination root folder  
+[ ] implement a simple versioning visitor on a version tag given in cfg, put all destination files in a new /tag/ directory to avoid having to repeat this tag throughout the cfg)  
+[ ] make it easier to pass configuration to visitors, even from extra custom command line args, so that for instance it's easy to run packman twice with the conditional visitor: packman -Dbrowser=IE7 and packman -Dbrowser=FF below)  
+[ ] Put in place custom visitors args from the command line: something like -Dkey1=value1 -Dkey2=value2 etc...  
+[ ] Do the same from the config itself, dedicated place in the config to store custom args, and the custom args from the command line will come in the same object too if conceptually, the whole config object is open)  
+[ ] stats visitor, runs onEnd, outputs a txt file containing stats about the packaged files, how many pakaged files, their size and gzipped), how many files are inside each package ...  
+[ ] split further the files in lib utils, yaml, ...) for easier testing 
+
