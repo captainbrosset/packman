@@ -23,20 +23,20 @@ var frames = [
 // Messages, get updated depending on how long packman watcher has been running
 // Multiply index of the array by 10 to get the number of seconds
 var messages = [
-    "waiting for changes ...                                             ".yellow,
-    "waiting for changes ...                                             ".yellow,
-    "still waiting ...                                                   ".yellow,
-    "still waiting ...                                                   ".yellow,
-    "are you still there?                                                ".yellow,
-    "are you there?                                                      ".yellow,
-    "what the fuck ....                                                  ".yellow,
-    "I need to quit this job                                             ".yellow,
-    "who do you think I am?                                              ".yellow,
-    "I don't care, do what you want, I'm not packaging your files anymore".yellow,
-    "NOT watching ...                                                    ".yellow,
-    "still NOT watching ...                                              ".yellow,
-    "(sigh) ... I don't have anything else to do anyway ...              ".yellow,
-    "just let me know when you're back                                   ".yellow,
+  "waiting for changes ...                                             ".yellow,
+  "waiting for changes ...                                             ".yellow,
+  "still waiting ...                                                   ".yellow,
+  "still waiting ...                                                   ".yellow,
+  "are you still there?                                                ".yellow,
+  "are you there?                                                      ".yellow,
+  "what the fuck ....                                                  ".yellow,
+  "I need to quit this job                                             ".yellow,
+  "who do you think I am?                                              ".yellow,
+  "I don't care, do what you want, I'm not packaging your files anymore".yellow,
+  "NOT watching ...                                                    ".yellow,
+  "still NOT watching ...                                              ".yellow,
+  "(sigh) ... I don't have anything else to do anyway ...              ".yellow,
+  "just let me know when you're back                                   ".yellow,
 ];
 var messageIndex = 0;
 
