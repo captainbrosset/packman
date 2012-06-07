@@ -11,3 +11,4 @@ packman todo list
 [ ] stats visitor, runs onEnd, outputs a txt file containing stats about the packaged files, how many pakaged files, their size and gzipped), how many files are inside each package ...  
 [ ] split further the files in lib utils, yaml, ...) for easier testing 
 
+
