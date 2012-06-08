@@ -98,6 +98,7 @@ function getVisitorInstances(visitors) {
  */
 function runVisitorsOnPhase(phase, visitors, args, callback) {
     var visitors = clone.cloneArray(visitors);
+
     if(visitors.length === 0) {
         callback();
     } else {

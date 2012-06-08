@@ -69,33 +69,38 @@ function mergeOneFile(filePath, sourceDir, packageFileObject, config, visitors, 
  * @return {String} The target file name that was created
  */
 function mergeOnePackage(filePaths, targetFilePath, config, visitors, callback) {
-    source = config.source || "./";
-    destination = config.destination || "./";
+    // break new package merge into fresh stacks, this gives a CPU time penalty, but avoids exceeding the call stack
+    process.nextTick(function() {
 
-    var packageFileObject = new PackageFile(targetFilePath, "");
+        source = config.source || "./";
+        destination = config.destination || "./";
 
-    vh.runVisitorsOnPhase(vh.phases.onPackageStart, visitors, [config, packageFileObject], function() {
-        functions = [];
-        for(var i = 0, l = filePaths.length; i < l; i ++) {
-            (function() {
-                var filePath = filePaths[i];
-                functions.push(function(callback) {
-                    logger.logDebug("Merging file " + filePath + " in " + targetFilePath);
-                    mergeOneFile(filePath, source, packageFileObject, config, visitors, callback);
+        var packageFileObject = new PackageFile(targetFilePath, "");
+
+        vh.runVisitorsOnPhase(vh.phases.onPackageStart, visitors, [config, packageFileObject], function() {
+            functions = [];
+            for(var i = 0, l = filePaths.length; i < l; i ++) {
+                (function() {
+                    var filePath = filePaths[i];
+                    functions.push(function(cb) {
+                        logger.logDebug("Merging file " + filePath + " in " + targetFilePath);
+                        mergeOneFile(filePath, source, packageFileObject, config, visitors, cb);
+                    });
+                })();
+            }
+
+            sequence(functions, [], function() {
+                vh.runVisitorsOnPhase(vh.phases.onPackageEnd, visitors, [config, packageFileObject], function() {
+                    var packageContent = packageFileObject.content;
+                    var packageFileName = fu.getPhysicalPath(packageFileObject.path, destination);
+
+                    fu.writeContentToFile(packageFileName, packageContent);
+
+                    callback(packageFileName);
                 });
-            })();
-        }
-
-        sequence(functions, [], function() {
-            vh.runVisitorsOnPhase(vh.phases.onPackageEnd, visitors, [config, packageFileObject], function() {
-                var packageContent = packageFileObject.content;
-                var packageFileName = fu.getPhysicalPath(packageFileObject.path, destination);
-
-                fu.writeContentToFile(packageFileName, packageContent);
-
-                callback(packageFileName);
             });
         });
+
     });
 }
 
