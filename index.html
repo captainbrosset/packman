@@ -110,7 +110,10 @@ packages:
 
 <p>A visitor in packman is simply a nodejs module that exports any of the following functions:</p>
 
-<pre><code>// At the very start, even before any files have been packaged
+<pre><code>// At the very start, just after the config file is loaded
+onAfterConfigLoaded: function(callback, config) {},
+
+// Main entry point, before any file is packaged
 onStart: function(callback, config) {},
 
 // Before starting to package a set of files together
