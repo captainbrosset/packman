@@ -80,6 +80,15 @@ packages:
 
 <p>The first level of the config contains general configuration like the <code>source</code> and <code>destination</code> folders, a flag telling packman whether the destination should be erased if it already exists or not, the global <code>visitors</code> to use and the list of <code>packages</code> to create.</p>
 
+<p>Many configuration parameters are optional, in fact, <code>packages</code> is really the one you want to work on. Here is the default config:</p>
+<pre><code>source: ./src
+destination: ./target
+eraseIfExists: false
+visitors:
+    - sep
+packages:
+</code></pre>
+
 <p>Then, inside the <code>packages</code> node, is the list of all packages to be created.</p>
 
 <p>Files to be included inside a package are given in the <code>files</code> sub-node and can be either an array of file names, or an object with either <code>includes</code> or <code>excludes</code> or both. These sub-properties are arrays of file names or ant pattern (?, *, **). If an array of files is provided, the files will be merged in this order.</p>
