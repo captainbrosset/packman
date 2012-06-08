@@ -17,8 +17,7 @@ function getMinifiedContent(content, path, mangle) {
         ast = minifier.ast_squeeze(ast);
         return minifier.gen_code(ast);
     } catch(e) {
-        logger.logError("Could not minify file " + path);
-        logger.logDebug(e.message);
+        logger.logError("Could not uglify file " + path + ", ", e);
         return content;
     }
 }
@@ -28,8 +27,12 @@ function getFileNameExtension(fileName) {
 }
 
 module.exports.onFileContent = function(callback, config, fileObject) {
-    if(getFileNameExtension(fileObject.path) === ".js") {
-        fileObject.content = getMinifiedContent(fileObject.content, fileObject.path, true) + ";";
+    try {
+        if(getFileNameExtension(fileObject.path) === ".js") {
+            fileObject.content = getMinifiedContent(fileObject.content, fileObject.path, true) + ";";
+        }
+    } catch(e) {
+        logger.logError("uglify visitor could not uglify " + fileObject.path, e);
     }
     callback();
 };
