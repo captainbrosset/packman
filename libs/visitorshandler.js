@@ -2,6 +2,8 @@ var clone = require("./clone.js");
 
 
 var phases = {
+    // Just after the config is loaded (so that visitors can modify it), this is the very first thing executed
+    onAfterConfigLoaded: "onAfterConfigLoaded",
     // At the very start, even before any files have been packaged
     onStart: "onStart",
     // Before starting to package a set of files together
@@ -105,7 +107,7 @@ function runVisitorsOnPhase(phase, visitors, args, callback) {
                 runVisitorsOnPhase(phase, visitors, args, callback);
             }].concat(args));
         } catch(e) {
-            logger.logError("Visitor " + visitor.name + " crashed with error: " + e);
+            logger.logError("Visitor " + visitor.name + " crashed on phase " + phase + "\n\twith error: " + e + "\n\twith arguments: " + args);
             runVisitorsOnPhase(phase, visitors, args, callback);
         }
     }
