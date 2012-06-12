@@ -73,47 +73,57 @@ if(argv.h) {
 
         var config = configReader.get(argv.c);
 
-        if(config !== null && Object.keys(config.packages).length > 0) {
+        if(config !== null) {
 
             // TODO: clean this up a bit to do it once rather than in merger.js again
             var globalVisitors = vh.getVisitorInstances(config.visitors);
             vh.runVisitorsOnPhase(vh.phases.onAfterConfigLoaded, globalVisitors, [config], function() {
 
-                var isEnvReady = require("./libs/env.js").prepare(config.destination, config.eraseIfExists);
+                if(Object.keys(config.packages).length > 0) {
 
-                if(isEnvReady) {
-                    var allSourceFiles = require("./libs/finder.js").getAllSourceFiles(config.source);
+                    var isEnvReady = require("./libs/env.js").prepare(config.destination, config.eraseIfExists);
 
-                    if(allSourceFiles.length > 0) {
+                    if(isEnvReady) {
+                        var allSourceFiles = require("./libs/finder.js").getAllSourceFiles(config.source);
 
-                        var resolvedPackages = require("./libs/clone.js").clone(config.packages);
-                        resolvedPackages = require("./libs/resolver.js").resolveFilePaths(resolvedPackages, allSourceFiles);
-                        config.resolvedPackages = resolvedPackages;
+                        if(allSourceFiles.length > 0) {
 
-                        logger.logInfo("Getting started with: source=" + config.source + ", destination=" + config.destination + ", eraseIfExists=" + config.eraseIfExists);
+                            var resolvedPackages = require("./libs/clone.js").clone(config.packages);
+                            resolvedPackages = require("./libs/resolver.js").resolveFilePaths(resolvedPackages, allSourceFiles);
+                            config.resolvedPackages = resolvedPackages;
 
-                        var merger = require("./libs/merger.js");
+                            logger.logInfo("Getting started with: source=" + config.source + ", destination=" + config.destination + ", eraseIfExists=" + config.eraseIfExists);
 
-                        merger.merge(config, function() {
-                            console.log("");
-                            var time = ((new Date().getTime()) - startTime) / 1000;
-                            if(!argv.w) {
-                                console.log((" packman did it again! Have a great day! (" + time + " sec)").yellow.bold);
-                            }
-                            console.log("");
-                            if(callback)    callback();
-                        });
+                            var merger = require("./libs/merger.js");
+
+                            merger.merge(config, function() {
+                                console.log("");
+                                var time = ((new Date().getTime()) - startTime) / 1000;
+                                if(!argv.w) {
+                                    console.log((" packman did it again! Have a great day! (" + time + " sec)").yellow.bold);
+                                }
+                                console.log("");
+                                if(callback)    callback();
+                            });
+                        } else {
+                            process.exit(1);
+                        }
+
+                        allFileStats = getAllFileStats(allSourceFiles, config.source);
+
+                    } else {
+                        logger.logWarning("packman could not prepare the destination directory, there's an existing file at " + config.destination);
+                        logger.logWarning("Make sure you configure the proper destination directory path or set the 'eraseIfExists' config flag to true.");
                     }
 
-                    allFileStats = getAllFileStats(allSourceFiles, config.source);
-
                 } else {
-                    logger.logWarning("packman could not prepare the destination directory, there's an existing file at " + config.destination);
-                    logger.logWarning("Make sure you configure the proper destination directory path or set the 'eraseIfExists' config flag to true.");
+                    logger.logError("No packages are configured");
+                    process.exit(1);
                 }
 
             });
-
+        } else {
+            process.exit(1);
         }
     }
 
