@@ -6,19 +6,6 @@
  */
 
 require("colors");
-
-console.log([
-"                   _                          ".yellow.bold,
-"                  | |                         ".yellow.bold,
-"  _ __   __ _  ___| | ___ __ ___   __ _ _ __  ".yellow.bold,
-" | '_ \\ / _` |/ __| |/ / '_ ` _ \\ / _` | '_ \\ ".yellow.bold,
-" | |_) | (_| | (__|   <| | | | | | (_| | | | |".yellow.bold,
-" | .__/ \\__,_|\\___|_|\\_\\_| |_| |_|\\__,_|_| |_|".yellow.bold,
-" | |                     ".yellow.bold + "pack it up like a man ".yellow,
-" |_|                                          ".yellow.bold,
-""
-].join("\n"));
-
 require("./libs/logger.js");
 var fs = require("fs");
 var fu = require("./libs/fileutils.js")();
@@ -39,8 +26,27 @@ var argv = require('optimist')
     .alias('w', 'watch')
     .describe('w', 'Watch for file changes and run packman again if any')
     .boolean('w')
+    .alias('n', 'nologo')
+    .describe('n', 'Do not display the packman logo before starting')
+    .boolean('n')
     .argv
 ;
+
+if(!argv.n) {
+    console.log([
+    "                   _                          ".yellow.bold,
+    "                  | |                         ".yellow.bold,
+    "  _ __   __ _  ___| | ___ __ ___   __ _ _ __  ".yellow.bold,
+    " | '_ \\ / _` |/ __| |/ / '_ ` _ \\ / _` | '_ \\ ".yellow.bold,
+    " | |_) | (_| | (__|   <| | | | | | (_| | | | |".yellow.bold,
+    " | .__/ \\__,_|\\___|_|\\_\\_| |_| |_|\\__,_|_| |_|".yellow.bold,
+    " | |                     ".yellow.bold + "pack it up like a man ".yellow,
+    " |_|                                          ".yellow.bold,
+    ""
+    ].join("\n"));
+} else {
+    console.log("\n packman is starting\n".yellow.bold);
+}
 
 function getFileMTime(file) {
     return fs.statSync(file).mtime;
