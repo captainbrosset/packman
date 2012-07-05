@@ -2,7 +2,7 @@
   "author": "Patrick Brosset <patrickbrosset@gmail.com> (http://github.com/captainbrosset)",
   "name": "packman",
   "description": "text file packager tool",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "homepage": "http://github.com/captainbrosset/packman",
   "repository": {
     "type": "git",
