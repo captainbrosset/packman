@@ -18,7 +18,7 @@
   "dependencies": {
     "colors": "",
     "optimist": "",
-    "js-yaml": "",
+    "js-yaml": "0.3.7",
     "wrench": "",
     "uglify-js": "",
     "coffee-script": "",
