@@ -3,7 +3,7 @@
 	[
 		{
 			"path": "/Users/patrickbrosset/packman",
-            "folder_exclude_patterns": ["node_modules"]
+            "folder_exclude_patterns": ["node_modules", "test/target"]
 		}
 	]
 }

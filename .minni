@@ -1,7 +1,6 @@
 packman todo list
 ================================================================================
 [ ] definitely need something to have single (non packaged) files also going through the merger and ending up in destination, without having to specify them as packages one by one in the config. In fact, could do this with a simple flag at config root level, something like "treatRemainingFilesAsStandalonePackages" (shorter of course). So that, at the end of the resolution, we just look for non included files, and put them as packages of their own, using the global visitors
-[ ] flag to be able to turn off the packman logo (to avoid polluting too much logs, especially when packman is run as part of a series of build tools)
 [ ] implement the conditional visitor
 [ ] implement the special AT visitors ....  
 [ ] instead of crappy md5, do the first few chars of the sha1, and give an example doc or visitor) that creates the piece of HTML that includes the files an include.html for instance that has the <link href=...sha1.css> and <script src=...sha1.js> or maybe just a piece of txt that has the map or something)  
