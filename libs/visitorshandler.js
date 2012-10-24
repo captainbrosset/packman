@@ -109,6 +109,9 @@ function runVisitorsOnPhase(phase, visitors, args, callback) {
             }].concat(args));
         } catch(e) {
             logger.logError("Visitor " + visitor.name + " crashed on phase " + phase + "\n\twith error: " + e + "\n\twith arguments: " + args);
+            if(args[0].exitOnFailedVisitor) {
+                process.exit(1);
+            }
             runVisitorsOnPhase(phase, visitors, args, callback);
         }
     }

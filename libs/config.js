@@ -6,6 +6,7 @@ var defaultConfig = {
     destination: "./target",
     eraseIfExists: false,
     visitors: ["sep"],
+    exitOnFailedVisitor: false,
     packages: {},
     resolvedPackages: {}
 };
