@@ -7,6 +7,7 @@ var defaultConfig = {
   eraseIfExists: false,
   visitors: ["sep"],
   exitOnFailedVisitor: false,
+  exitOnFileNotFound: false,
   packages: {},
   resolvedPackages: {}
 };

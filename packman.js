@@ -45,7 +45,7 @@ if(!argv.n) {
     ""
     ].join("\n"));
 } else {
-    console.log("\n packman is starting\n".yellow.bold);
+    console.log();
 }
 
 function getFileMTime(file) {

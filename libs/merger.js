@@ -38,8 +38,12 @@ function mergeOneFile(filePath, sourceDir, packageFileObject, config, visitors, 
   } catch(e) {
     logger.logError("Could not find file " + physicalFilePath + " to be merged");
     logger.logDebug(e.message);
-    callback();
-    return;
+    if(config.exitOnFileNotFound) {
+      process.exit(1);
+    } else {
+      callback();
+      return;
+    }
   }
 
   var fileObject = new File(filePath, physicalFilePath, fileContent, packageFileObject);
