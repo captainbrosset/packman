@@ -1,0 +1,7 @@
+source: ./
+destination: ./test/testtarget
+exitOnFileNotFound: false
+packages:
+  all.pack:
+    files:
+    - notarealfile.js
