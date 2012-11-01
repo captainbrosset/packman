@@ -8,30 +8,31 @@ var fs = require("fs");
  * @return {Boolean} Returns true if the directory is ready (either it was already here, or it's been created). False if eraseIfExists is false and a file (not a folder) with the same path was found.
  */
 module.exports.prepare = function(destination, eraseIfExists) {
-    var isFolder = false, exists = false;
+  var isFolder = false,
+    exists = false;
 
-    try {
-        var stats = fs.lstatSync(destination);
-        exists = true;
-        if(stats.isDirectory()) {
-            isFolder = true;
-        }
-    } catch (e) {}
-
-    if(exists) {
-        if(eraseIfExists) {
-            wrench.rmdirSyncRecursive(destination, true);
-            wrench.mkdirSyncRecursive(destination, 0777);
-            return true;
-        } else {        
-            if(isFolder) {
-                return true;
-            } else {
-                return false;
-            }
-        }
-    } else {
-        wrench.mkdirSyncRecursive(destination, 0777);
-        return true;
+  try {
+    var stats = fs.lstatSync(destination);
+    exists = true;
+    if(stats.isDirectory()) {
+      isFolder = true;
     }
+  } catch(e) {}
+
+  if(exists) {
+    if(eraseIfExists) {
+      wrench.rmdirSyncRecursive(destination, true);
+      wrench.mkdirSyncRecursive(destination, 0777);
+      return true;
+    } else {
+      if(isFolder) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  } else {
+    wrench.mkdirSyncRecursive(destination, 0777);
+    return true;
+  }
 };

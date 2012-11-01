@@ -1,0 +1,9 @@
+source: ./test/stacksrc
+destination: ./test/stacktarget
+visitors:
+- ./test/stackvisitor.js
+packages:
+  all.pack:
+    files:
+      includes:
+      - "*.js"

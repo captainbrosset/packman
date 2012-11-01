@@ -1,0 +1,10 @@
+source: ./
+destination: ./test/target
+packages:
+  all.pack:
+    files:
+      includes:
+      - "**/*.js"
+      excludes:
+      - "node_modules/**/*"
+      - "test/**/*"

@@ -3,7 +3,7 @@ var stringutils = require("./stringutils.js");
 var pathSeparator = "/";
 
 function match(pattern, str) {
-	if (stringutils.startsWith(str, pathSeparator) != stringutils.startsWith(pattern, pathSeparator)) {
+	if(stringutils.startsWith(str, pathSeparator) != stringutils.startsWith(pattern, pathSeparator)) {
 		return false;
 	}
 
@@ -16,69 +16,67 @@ function match(pattern, str) {
 	var strIdxEnd = strDirs.length - 1;
 
 	// Match all elements up to the first **
-	while (patIdxStart <= patIdxEnd && strIdxStart <= strIdxEnd) {
+	while(patIdxStart <= patIdxEnd && strIdxStart <= strIdxEnd) {
 		var patDir = patDirs[patIdxStart];
-		if (patDir === "**") {
+		if(patDir === "**") {
 			break;
 		}
-		if (!matchStrings(patDir, strDirs[strIdxStart])) {
+		if(!matchStrings(patDir, strDirs[strIdxStart])) {
 			return false;
 		}
 		patIdxStart++;
 		strIdxStart++;
 	}
 
-	if (strIdxStart > strIdxEnd) {
+	if(strIdxStart > strIdxEnd) {
 		// String is exhausted, only match if rest of pattern is * or **'s
-		if (patIdxStart == patIdxEnd && patDirs[patIdxStart] === "*" &&
-				stringutils.endsWith(str, pathSeparator)) {
+		if(patIdxStart == patIdxEnd && patDirs[patIdxStart] === "*" && stringutils.endsWith(str, pathSeparator)) {
 			return true;
 		}
-		for (var i = patIdxStart; i <= patIdxEnd; i++) {
-			if (!patDirs[i] === "**") {
+		for(var i = patIdxStart; i <= patIdxEnd; i++) {
+			if(!patDirs[i] === "**") {
 				return false;
 			}
 		}
 		return true;
-	}
-	else {
-		if (patIdxStart > patIdxEnd) {
+	} else {
+		if(patIdxStart > patIdxEnd) {
 			// String not exhausted, but pattern is. Failure.
 			return false;
 		}
 	}
 
 	// up to last '**'
-	while (patIdxStart <= patIdxEnd && strIdxStart <= strIdxEnd) {
+	while(patIdxStart <= patIdxEnd && strIdxStart <= strIdxEnd) {
 		var patDir = patDirs[patIdxEnd];
-		if (patDir === "**") {
+		if(patDir === "**") {
 			break;
 		}
-		if (!matchStrings(patDir, strDirs[strIdxEnd])) {
+		if(!matchStrings(patDir, strDirs[strIdxEnd])) {
 			return false;
 		}
 		patIdxEnd--;
 		strIdxEnd--;
 	}
-	if (strIdxStart > strIdxEnd) {
+	if(strIdxStart > strIdxEnd) {
 		// String is exhausted
-		for (var i = patIdxStart; i <= patIdxEnd; i++) {
-			if (!patDirs[i] === "**") {
+		for(var i = patIdxStart; i <= patIdxEnd; i++) {
+			if(!patDirs[i] === "**") {
 				return false;
 			}
 		}
 		return true;
 	}
 
-	while (patIdxStart != patIdxEnd && strIdxStart <= strIdxEnd) {
+	while(patIdxStart != patIdxEnd && strIdxStart <= strIdxEnd) {
 		var patIdxTmp = -1;
-		for (var i = patIdxStart + 1; i <= patIdxEnd; i++) {
-			if (patDirs[i] === "**") {
+		for(var i = patIdxStart + 1; i <= patIdxEnd; i++) {
+			if(patDirs[i] === "**") {
 				patIdxTmp = i;
 				break;
 			}
 		}
-		if (patIdxTmp == patIdxStart + 1) {
+		if(patIdxTmp == patIdxStart + 1) {
 			// '**/**' situation, so skip one
 			patIdxStart++;
 			continue;
@@ -88,21 +86,20 @@ function match(pattern, str) {
 		var patLength = (patIdxTmp - patIdxStart - 1);
 		var strLength = (strIdxEnd - strIdxStart + 1);
 		var foundIdx = -1;
-		strLoop:
-		    for (var i = 0; i <= strLength - patLength; i++) {
-			    for (var j = 0; j < patLength; j++) {
-				    var subPat = patDirs[patIdxStart + j + 1];
-				    var subStr = strDirs[strIdxStart + i + j];
-				    if (!matchStrings(subPat, subStr)) {
-					    continue strLoop;
-				    }
-			    }
+		strLoop: for(var i = 0; i <= strLength - patLength; i++) {
+			for(var j = 0; j < patLength; j++) {
+				var subPat = patDirs[patIdxStart + j + 1];
+				var subStr = strDirs[strIdxStart + i + j];
+				if(!matchStrings(subPat, subStr)) {
+					continue strLoop;
+				}
+			}
 
-			    foundIdx = strIdxStart + i;
-			    break;
-		    }
+			foundIdx = strIdxStart + i;
+			break;
+		}
 
-		if (foundIdx == -1) {
+		if(foundIdx == -1) {
 			return false;
 		}
 
@@ -110,8 +107,8 @@ function match(pattern, str) {
 		strIdxStart = foundIdx + patLength;
 	}
 
-	for (var i = patIdxStart; i <= patIdxEnd; i++) {
-		if (!patDirs[i] === "**") {
+	for(var i = patIdxStart; i <= patIdxEnd; i++) {
+		if(!patDirs[i] === "**") {
 			return false;
 		}
 	}
@@ -129,23 +126,23 @@ function matchStrings(pattern, str) {
 	var ch;
 
 	var containsStar = false;
-	for (var i = 0; i < patArr.length; i++) {
-		if (patArr[i] == '*') {
+	for(var i = 0; i < patArr.length; i++) {
+		if(patArr[i] == '*') {
 			containsStar = true;
 			break;
 		}
 	}
 
-	if (!containsStar) {
+	if(!containsStar) {
 		// No '*'s, so we make a shortcut
-		if (patIdxEnd != strIdxEnd) {
+		if(patIdxEnd != strIdxEnd) {
 			return false; // Pattern and string do not have the same size
 		}
-		for (var i = 0; i <= patIdxEnd; i++) {
+		for(var i = 0; i <= patIdxEnd; i++) {
 			ch = patArr[i];
-			if (ch != '?') {
-				if (ch != strArr[i]) {
-					return false;// Character mismatch
+			if(ch != '?') {
+				if(ch != strArr[i]) {
+					return false; // Character mismatch
 				}
 			}
 		}
@@ -153,25 +150,25 @@ function matchStrings(pattern, str) {
 	}
 
 
-	if (patIdxEnd == 0) {
+	if(patIdxEnd == 0) {
 		return true; // Pattern contains only '*', which matches anything
 	}
 
 	// Process characters before first star
-	while ((ch = patArr[patIdxStart]) != '*' && strIdxStart <= strIdxEnd) {
-		if (ch != '?') {
-			if (ch != strArr[strIdxStart]) {
-				return false;// Character mismatch
+	while((ch = patArr[patIdxStart]) != '*' && strIdxStart <= strIdxEnd) {
+		if(ch != '?') {
+			if(ch != strArr[strIdxStart]) {
+				return false; // Character mismatch
 			}
 		}
 		patIdxStart++;
 		strIdxStart++;
 	}
-	if (strIdxStart > strIdxEnd) {
+	if(strIdxStart > strIdxEnd) {
 		// All characters in the string are used. Check if only '*'s are
 		// left in the pattern. If so, we succeeded. Otherwise failure.
-		for (var i = patIdxStart; i <= patIdxEnd; i++) {
-			if (patArr[i] != '*') {
+		for(var i = patIdxStart; i <= patIdxEnd; i++) {
+			if(patArr[i] != '*') {
 				return false;
 			}
 		}
@@ -179,20 +176,20 @@ function matchStrings(pattern, str) {
 	}
 
 	// Process characters after last star
-	while ((ch = patArr[patIdxEnd]) != '*' && strIdxStart <= strIdxEnd) {
-		if (ch != '?') {
-			if (ch != strArr[strIdxEnd]) {
-				return false;// Character mismatch
+	while((ch = patArr[patIdxEnd]) != '*' && strIdxStart <= strIdxEnd) {
+		if(ch != '?') {
+			if(ch != strArr[strIdxEnd]) {
+				return false; // Character mismatch
 			}
 		}
 		patIdxEnd--;
 		strIdxEnd--;
 	}
-	if (strIdxStart > strIdxEnd) {
+	if(strIdxStart > strIdxEnd) {
 		// All characters in the string are used. Check if only '*'s are
 		// left in the pattern. If so, we succeeded. Otherwise failure.
-		for (var i = patIdxStart; i <= patIdxEnd; i++) {
-			if (patArr[i] != '*') {
+		for(var i = patIdxStart; i <= patIdxEnd; i++) {
+			if(patArr[i] != '*') {
 				return false;
 			}
 		}
@@ -201,15 +198,15 @@ function matchStrings(pattern, str) {
 
 	// process pattern between stars. padIdxStart and patIdxEnd point
 	// always to a '*'.
-	while (patIdxStart != patIdxEnd && strIdxStart <= strIdxEnd) {
+	while(patIdxStart != patIdxEnd && strIdxStart <= strIdxEnd) {
 		var patIdxTmp = -1;
-		for (var i = patIdxStart + 1; i <= patIdxEnd; i++) {
-			if (patArr[i] == '*') {
+		for(var i = patIdxStart + 1; i <= patIdxEnd; i++) {
+			if(patArr[i] == '*') {
 				patIdxTmp = i;
 				break;
 			}
 		}
-		if (patIdxTmp == patIdxStart + 1) {
+		if(patIdxTmp == patIdxStart + 1) {
 			// Two stars next to each other, skip the first one.
 			patIdxStart++;
 			continue;
@@ -219,12 +216,11 @@ function matchStrings(pattern, str) {
 		var patLength = (patIdxTmp - patIdxStart - 1);
 		var strLength = (strIdxEnd - strIdxStart + 1);
 		var foundIdx = -1;
-		strLoop:
-		for (var i = 0; i <= strLength - patLength; i++) {
-			for (var j = 0; j < patLength; j++) {
+		strLoop: for(var i = 0; i <= strLength - patLength; i++) {
+			for(var j = 0; j < patLength; j++) {
 				ch = patArr[patIdxStart + j + 1];
-				if (ch != '?') {
-					if (ch != strArr[strIdxStart + i + j]) {
+				if(ch != '?') {
+					if(ch != strArr[strIdxStart + i + j]) {
 						continue strLoop;
 					}
 				}
@@ -234,7 +230,7 @@ function matchStrings(pattern, str) {
 			break;
 		}
 
-		if (foundIdx == -1) {
+		if(foundIdx == -1) {
 			return false;
 		}
 
@@ -244,8 +240,8 @@ function matchStrings(pattern, str) {
 
 	// All characters in the string are used. Check if only '*'s are left
 	// in the pattern. If so, we succeeded. Otherwise failure.
-	for (var i = patIdxStart; i <= patIdxEnd; i++) {
-		if (patArr[i] != '*') {
+	for(var i = patIdxStart; i <= patIdxEnd; i++) {
+		if(patArr[i] != '*') {
 			return false;
 		}
 	}

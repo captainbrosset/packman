@@ -18,7 +18,7 @@ var PackageFile = function(path, content) {
     this.path = path;
     this.content = content;
     this.currentFile = null;
-};
+  };
 
 /**
  * Single text file object representation to be given to visitors
@@ -28,34 +28,35 @@ var File = function(path, physicalPath, content, packageFile) {
     this.physicalPath = physicalPath;
     this.content = content;
     this.packageFile = packageFile;
-};
+  };
 
 function mergeOneFile(filePath, sourceDir, packageFileObject, config, visitors, callback) {
-    var physicalFilePath = fu.getPhysicalPath(filePath, sourceDir);
-    try {
-        var fileContent = fs.readFileSync(physicalFilePath, "utf-8");
-    } catch (e) {
-        logger.logError("Could not find file " + physicalFilePath + " to be merged");
-        logger.logDebug(e.message);
-        callback();
-        return;
-    }
+  var physicalFilePath = fu.getPhysicalPath(filePath, sourceDir);
+  
+  try {
+    var fileContent = fs.readFileSync(physicalFilePath, "utf-8");
+  } catch(e) {
+    logger.logError("Could not find file " + physicalFilePath + " to be merged");
+    logger.logDebug(e.message);
+    callback();
+    return;
+  }
 
-    var fileObject = new File(filePath, physicalFilePath, fileContent, packageFileObject);
+  var fileObject = new File(filePath, physicalFilePath, fileContent, packageFileObject);
 
-    packageFileObject.currentFile = fileObject;
+  packageFileObject.currentFile = fileObject;
 
-    vh.runVisitorsOnPhase(vh.phases.onFileStart, visitors, [config, packageFileObject], function() {
-        vh.runVisitorsOnPhase(vh.phases.onFileContent, visitors, [config, fileObject], function() {
-            if(!fileObject.content) {
-                logger.logWarning("The visitors generating " + fileObject.path + " did not return any content.");
-            }
+  vh.runVisitorsOnPhase(vh.phases.onFileStart, visitors, [config, packageFileObject], function() {
+    vh.runVisitorsOnPhase(vh.phases.onFileContent, visitors, [config, fileObject], function() {
+      if(!fileObject.content) {
+        logger.logWarning("The visitors generating " + fileObject.path + " did not return any content.");
+      }
 
-            packageFileObject.content += fileObject.content;
+      packageFileObject.content += fileObject.content;
 
-            vh.runVisitorsOnPhase(vh.phases.onFileEnd, visitors, [config, packageFileObject], callback);
-        });
+      vh.runVisitorsOnPhase(vh.phases.onFileEnd, visitors, [config, packageFileObject], callback);
     });
+  });
 }
 
 /**
@@ -68,96 +69,100 @@ function mergeOneFile(filePath, sourceDir, packageFileObject, config, visitors, 
  * @param {Object} visitors [Optional] The list of visitors to run for this package.
  * @return {String} The target file name that was created
  */
+
 function mergeOnePackage(filePaths, targetFilePath, config, visitors, callback) {
-    // break new package merge into fresh stacks, this gives a CPU time penalty, but avoids exceeding the call stack
-    process.nextTick(function() {
+  // break new package merge into fresh stacks, this gives a CPU time penalty, but avoids exceeding the call stack
+  process.nextTick(function() {
 
-        source = config.source || "./";
-        destination = config.destination || "./";
+    source = config.source || "./";
+    destination = config.destination || "./";
 
-        var packageFileObject = new PackageFile(targetFilePath, "");
+    var packageFileObject = new PackageFile(targetFilePath, "");
 
-        vh.runVisitorsOnPhase(vh.phases.onPackageStart, visitors, [config, packageFileObject], function() {
-            functions = [];
-            for(var i = 0, l = filePaths.length; i < l; i ++) {
-                (function() {
-                    var filePath = filePaths[i];
-                    functions.push(function(cb) {
-                        logger.logDebug("Merging file " + filePath + " in " + targetFilePath);
-                        mergeOneFile(filePath, source, packageFileObject, config, visitors, cb);
-                    });
-                })();
-            }
-
-            sequence(functions, [], function() {
-                vh.runVisitorsOnPhase(vh.phases.onPackageEnd, visitors, [config, packageFileObject], function() {
-                    var packageContent = packageFileObject.content;
-                    var packageFileName = fu.getPhysicalPath(packageFileObject.path, destination);
-
-                    fu.writeContentToFile(packageFileName, packageContent);
-
-                    callback(packageFileName);
-                });
+    vh.runVisitorsOnPhase(vh.phases.onPackageStart, visitors, [config, packageFileObject], function() {
+      functions = [];
+      for(var i = 0, l = filePaths.length; i < l; i++) {
+         (function() {
+          var filePath = filePaths[i];
+          functions.push(function(cb) {
+            logger.logDebug("Merging file " + filePath + " in " + targetFilePath);
+            process.nextTick(function() {
+              mergeOneFile(filePath, source, packageFileObject, config, visitors, cb);
             });
-        });
+          });
+        })();
+      }
 
+      sequence(functions, [], function() {
+        vh.runVisitorsOnPhase(vh.phases.onPackageEnd, visitors, [config, packageFileObject], function() {
+          var packageContent = packageFileObject.content;
+          var packageFileName = fu.getPhysicalPath(packageFileObject.path, destination);
+
+          fu.writeContentToFile(packageFileName, packageContent);
+
+          callback(packageFileName);
+        });
+      });
     });
+
+  });
 }
 
 /**
  * Run the merge multiple times
  * @param {Object} config Config object telling multiMerge which packages to create and how.
  */
+
 function merge(config, mergeDoneCallback) {
-    var globalVisitors = vh.getVisitorInstances(config.visitors);
+  var globalVisitors = vh.getVisitorInstances(config.visitors);
 
-    var packages = config.packages;
+  var packages = config.packages;
 
-    vh.runVisitorsOnPhase(vh.phases.onStart, globalVisitors, [config], function() {
-        var functions = [];
-        for(var packageName in config.resolvedPackages) {
+  vh.runVisitorsOnPhase(vh.phases.onStart, globalVisitors, [config], function() {
+    var functions = [];
+    for(var packageName in config.resolvedPackages) {
 
-            (function() {
-                var name = packageName;
-                var package = config.packages[name];
-                var resolvedPackage = config.resolvedPackages[name];
+      (function() {
+        var name = packageName;
+        var package = config.packages[name];
+        var resolvedPackage = config.resolvedPackages[name];
 
-                functions.push(function(onePackageMergedCallback) {
-                    var localVisitors = globalVisitors;
+        functions.push(function(onePackageMergedCallback) {
+          var localVisitors = globalVisitors;
 
-                    if(resolvedPackage.visitors) {
-                        localVisitors = vh.getVisitorInstances(resolvedPackage.visitors);
-                    }
+          if(resolvedPackage.visitors) {
+            localVisitors = vh.getVisitorInstances(resolvedPackage.visitors);
+          }
 
-                    var files = resolvedPackage.files;
+          var files = resolvedPackage.files;
 
-                    logger.logInfo("Creating package " + name);
-                    if(package.visitors) {
-                        logger.logDebug("Using visitors " + package.visitors);
-                    } else {
-                        logger.logDebug("Using visitors " + config.visitors);
-                    }
+          logger.logInfo("Creating package " + name);
+          if(package.visitors) {
+            logger.logDebug("Using visitors " + package.visitors);
+          } else {
+            logger.logDebug("Using visitors " + config.visitors);
+          }
 
-                    mergeOnePackage(files, name, config, localVisitors, function(newPackageName) {
-                        // Updating the original config to replace the package name with the new name
-                        config.packages[newPackageName] = config.packages[name];
-                        delete config.packages[name];
-                        config.resolvedPackages[newPackageName] = config.resolvedPackages[name];
-                        delete config.resolvedPackages[name];
+          mergeOnePackage(files, name, config, localVisitors, function(newPackageName) {
+            // Updating the original config to replace the package name with the new name
+            config.packages[newPackageName] = config.packages[name];
+            delete config.packages[name];
+            config.resolvedPackages[newPackageName] = config.resolvedPackages[name];
+            delete config.resolvedPackages[name];
 
-                        logger.logInfo("Package " + newPackageName + " created!");
+            logger.logInfo("Package " + newPackageName + " created!");
 
-                        onePackageMergedCallback();
-                    });
-                });
-            })();
-
-        }
-
-        sequence(functions, [], function() {
-            vh.runVisitorsOnPhase(vh.phases.onEnd, globalVisitors, [config], mergeDoneCallback);
+            onePackageMergedCallback();
+          });
         });
+      })();
+
+    }
+
+    sequence(functions, [], function() {
+      vh.runVisitorsOnPhase(vh.phases.onEnd, globalVisitors, [config], mergeDoneCallback);
     });
+  });
 }
 
 module.exports.mergeOnePackage = mergeOnePackage;
