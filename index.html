@@ -162,6 +162,16 @@ File =  {
 </code></pre>
 
 <p>Most visitors will want to modify the fileObject.content on the fly (to minify javascript for instance) or to append content to the packageFileObject.content (to insert separators for instance).</p>
+
+<h1>Special configuration parameters</h1>
+
+<p>A couple of other parameters are more seldomly used but could be interesting to you</p>
+<ul>
+  <li>`eraseIfExists`: by default, packman won't delete the content of your target directory, pass this to true if you want it to</li>
+  <li>`exitOnFailedVisitor`: turned off by default, turn it on if you want the packman process to exit with status code 1 when a visitor crashes</li>
+  <li>`exitOnFileNotFound`: turned off by default, turn it on if you want the packman process to exit with status code 1 as soon as it finds a non existing file in the package configuration.</li>
+</ul>
+
       </section>
       <footer>
         <p>This project is maintained by <a href="https://github.com/captainbrosset">captainbrosset</a></p>
