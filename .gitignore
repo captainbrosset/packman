@@ -1,6 +1,6 @@
-src
 target
 build
 .bin
 node_modules
 packman.sublime-workspace
+.DS_Store
