@@ -1,0 +1,18 @@
+source: ../ariatemplates/src
+destination: ./stats
+packages:
+  stats.html:
+    visitors:
+    - stats
+    files:
+      includes:
+      - "**/*"
+      excludes:
+      - ".git/**/*"
+      - "node_modules/**/*"
+      - ".*"
+      - "*sublime*"
+      - "**/*.gif"
+      - "**/*.png"
+      - "**/*.jpg"
+      - "**/*.jpeg"

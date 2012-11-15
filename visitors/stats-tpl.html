@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Stats for (:sourceFolder:)</title>
+    <link href="http://twitter.github.com/bootstrap/assets/css/bootstrap.css" rel="stylesheet">
+    <style type="text/css">
+      .pie {
+        height: 500px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container-fluid">
+      <h1>Stats for (:sourceFolder:)</h1>
+      <h2>(:nbOfFiles:) files / (:nbOfTotalLines:) lines (~ (:averageLinesPerFile:) per file)</h2>
+      <div class="row-fluid">
+        <div class="pie span6" id="fileSizePie"></div>
+        <div class="pie span6" id="fileTypesPie"></div>
+      </div>
+    </div>
+    <!-- ul>(:allFileStats ~
+      <li>File [:path:] has [:nb:] lines</li>
+    :)
+    </ul -->
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script type="text/javascript" src="http://code.highcharts.com/highcharts.js"></script>
+    <script type="text/javascript">
+      $(function () {
+          var fileTypesPie, fileSizePie;
+          $(document).ready(function() {
+              fileTypesPie = new Highcharts.Chart({
+                  chart: {
+                      renderTo: 'fileTypesPie',
+                      plotBackgroundColor: null,
+                      plotBorderWidth: null,
+                      plotShadow: false
+                  },
+                  title: {
+                      text: 'File types'
+                  },
+                  tooltip: {
+                      pointFormat: '<b>{point.y} *.{point.name} files ({point.percentage}%)</b>',
+                      percentageDecimals: 1
+                  },
+                  plotOptions: {
+                      pie: {
+                          allowPointSelect: false,
+                          cursor: 'default'
+                      }
+                  },
+                  series: [{
+                      type: 'pie',
+                      name: 'File types',
+                      data: [
+                        (:fileTypes ~
+                          ['[:type:]', [:nb:]],
+                        :)
+                      ]
+                  }]
+              });
+
+              fileSizePie = new Highcharts.Chart({
+                  chart: {
+                      renderTo: 'fileSizePie',
+                      plotBackgroundColor: null,
+                      plotBorderWidth: null,
+                      plotShadow: false
+                  },
+                  title: {
+                      text: 'File sizes'
+                  },
+                  tooltip: {
+                      pointFormat: '<b>{point.y} files below {point.name} lines ({point.percentage}%)</b>',
+                      percentageDecimals: 1
+                  },
+                  plotOptions: {
+                      pie: {
+                          allowPointSelect: false,
+                          cursor: 'default'
+                      }
+                  },
+                  series: [{
+                      type: 'pie',
+                      name: 'File sizes',
+                      data: [
+                        (:fileSizes ~
+                          ['[:max:]', [:nb:]],
+                        :)
+                      ]
+                  }]
+              });
+          });
+        });
+    </script>
+  </body>
+</html>

@@ -23,7 +23,8 @@
     "uglify-js": "",
     "coffee-script": "",
     "less": "",
-    "mocha": ""
+    "mocha": "",
+    "bind": "0.1.5"
   },
   "devDependencies": {},
   "scripts": {
