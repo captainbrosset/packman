@@ -1,4 +1,5 @@
-source: ../ariatemplates/src
+# Config example to generate stats
+source: ./
 destination: ./stats
 packages:
   stats.html:
@@ -12,7 +13,3 @@ packages:
       - "node_modules/**/*"
       - ".*"
       - "*sublime*"
-      - "**/*.gif"
-      - "**/*.png"
-      - "**/*.jpg"
-      - "**/*.jpeg"
