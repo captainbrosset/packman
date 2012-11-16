@@ -66,9 +66,17 @@ function getFileTypes(stats) {
   return fileTypes;
 };
 
-module.exports.onPackageEnd = function(callback, config, packageFileObject) {
+function getDate() {
   var now = new Date();
-  packageFileObject.path = 'Stats ' + now + '.html';
+  var year = now.getFullYear();
+  var month = now.getMonth() + 1;
+  var day = now.getDay();
+
+  return '' + day + '-' + month + '-' + year;
+}
+
+module.exports.onPackageEnd = function(callback, config, packageFileObject) {
+  packageFileObject.path = 'Stats-' + getDate() + '.html';
 
   var stats = packageFileObject.stats,
     totalLines = 0;
@@ -81,7 +89,7 @@ module.exports.onPackageEnd = function(callback, config, packageFileObject) {
     return b.nb - a.nb;
   });
 
-  bind.toFile('./visitors/stats-tpl.html', {
+  bind.toFile(__dirname + '/stats-tpl.html', {
     sourceFolder: config.source,
     allFileStats: stats,
     nbOfFiles: stats.length,
